@@ -1,7 +1,7 @@
 package fhj.swengb.project.remoty
 
 
-import java.io.File
+import java.io.{IOException, File}
 import java.net.URL
 import java.nio.file.{Files, FileSystems, FileSystem, Path}
 import java.util.ResourceBundle
@@ -100,21 +100,42 @@ class RemotyAppController extends Initializable {
   }
 
 
+  /**
+    * 
+    * Iterates over the files and directories of the given directory and enters it in the treeview
+    *
+    */
 
   //first set the directory as string
-  val directory: String = """C:\"""
+  val directory: File = new File("""C:\""")
 
   //use the array to store all files which are in the directory with list files
-    val files: Array[File] = new File(directory).listFiles()
+  displayDirectoryContent(directory)
 
   //iterate trough files and set them as subItems to the RootItem "C:"
-  //NEED TO evaluate how to also get directories
-  for(file: File <- files){
-    if(file.isFile){
-      val item = new TreeItem[String](file.getAbsolutePath,new ImageView(pictureFile))
-      rootItem.getChildren.add(item)
+  def displayDirectoryContent(dir: File): Unit = {
+    try{
+    val files: Array[File] = dir.listFiles()
+    for(file <- files){
+      if(file.isFile && !file.isHidden){
+        val item = new TreeItem[String](file.getAbsolutePath,new ImageView(pictureFile))
+        rootItem.getChildren.add(item)
+      }
+      else if(file.isDirectory && !file.isHidden){
+        val item = new TreeItem[String](file.getAbsolutePath,new ImageView(pictureFolder))
+        rootItem.getChildren.add(item)
+        displayDirectoryContent(file)
+
+      }
     }
+
+  }catch {
+      case e: IOException => e.printStackTrace()
+      case n: NullPointerException => n.printStackTrace()
+    }
+
   }
+
 
 
 
