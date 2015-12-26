@@ -3,7 +3,6 @@ package fhj.swengb.project.remoty
 
 import java.io.{IOException, File}
 import java.net.URL
-import java.nio.file.{Files, FileSystems, FileSystem, Path}
 import java.util.ResourceBundle
 import javafx.application.Application
 import javafx.event.EventHandler
@@ -14,7 +13,6 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.{Pane, StackPane, BorderPane}
 import javafx.scene.{Scene, Parent}
 import javafx.stage.Stage
-import javax.swing.filechooser.FileSystemView
 
 import scala.util.control.NonFatal
 
@@ -116,15 +114,15 @@ class RemotyAppController extends Initializable {
   def displayDirectoryContent(dir: File): Unit = {
     try{
     val files: Array[File] = dir.listFiles()
-    for(file <- files){
-      if(file.isFile && !file.isHidden){
-        val item = new TreeItem[String](file.getAbsolutePath,new ImageView(pictureFile))
+    for(content <- files){
+      if(content.isFile && !content.isHidden){
+        val item = new TreeItem[String](content.getAbsolutePath,new ImageView(pictureFile))
         rootItem.getChildren.add(item)
       }
-      else if(file.isDirectory && !file.isHidden){
-        val item = new TreeItem[String](file.getAbsolutePath,new ImageView(pictureFolder))
-        rootItem.getChildren.add(item)
-        displayDirectoryContent(file)
+      else if(content.isDirectory && !content.isHidden){
+        val item2 = new TreeItem[String](content.getAbsolutePath,new ImageView(pictureFolder))
+        rootItem.getChildren.add(item2)
+        displayDirectoryContent(content)
 
       }
     }
@@ -136,6 +134,9 @@ class RemotyAppController extends Initializable {
 
   }
 
+
+
+  }
 
 
 
