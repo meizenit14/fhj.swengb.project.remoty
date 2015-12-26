@@ -44,7 +44,7 @@ class RemotyApp extends javafx.application.Application {
 }
 
 
-class TicTacToeAppController extends Initializable {
+class RemotyAppController extends Initializable {
 
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
