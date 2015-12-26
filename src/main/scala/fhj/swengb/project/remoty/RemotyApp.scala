@@ -39,7 +39,7 @@ class RemotyApp extends javafx.application.Application {
       val scene = new Scene(loader.getRoot[Parent]) //loads the default scene
       stage.setScene(scene)
       stage.setResizable(false) //window cannot be rescaled
-      stage.getScene.getStylesheets.add(Css)
+      //stage.getScene.getStylesheets.add(Css)
       stage.show()
     } catch {
       case NonFatal(e) => e.printStackTrace()
@@ -50,7 +50,6 @@ class RemotyApp extends javafx.application.Application {
 class RemotyAppController extends Initializable {
 
   var border_pane: BorderPane = _
-  var tree_view: TreeView = _
 
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
@@ -58,7 +57,7 @@ class RemotyAppController extends Initializable {
   }
 
 
-  
+
 
 }
 
