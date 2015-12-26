@@ -4,6 +4,8 @@ import java.net.URL
 import java.util.ResourceBundle
 import javafx.application.Application
 import javafx.fxml.{Initializable, FXMLLoader}
+import javafx.scene.control.TreeView
+import javafx.scene.layout.BorderPane
 import javafx.scene.{Scene, Parent}
 import javafx.stage.Stage
 
@@ -25,9 +27,10 @@ class RemotyApp extends javafx.application.Application {
 
   val Css = "/fhj/swengb/project/remoty/Style.css"
   val Fxml = "/fhj/swengb/project/remoty/Remoty.fxml"
+  val Fxml2 = "/fhj/swengb/project/remoty/TreeViewTest.fxml"
 
 
-  val loader = new FXMLLoader(getClass.getResource(Fxml))
+  val loader = new FXMLLoader(getClass.getResource(Fxml2))
 
   override def start(stage: Stage): Unit =
     try {
@@ -44,12 +47,18 @@ class RemotyApp extends javafx.application.Application {
 }
 
 
-class TicTacToeAppController extends Initializable {
+class RemotyAppController extends Initializable {
+
+  var border_pane: BorderPane = _
+  var tree_view: TreeView = _
 
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    //initialize things here...
+
   }
+
+
+  
 
 }
 
