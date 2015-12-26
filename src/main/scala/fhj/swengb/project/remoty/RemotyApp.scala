@@ -48,7 +48,7 @@ class TicTacToeAppController extends Initializable {
 
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    //initialize things here...
+    //initialize things here..
   }
 
 }
