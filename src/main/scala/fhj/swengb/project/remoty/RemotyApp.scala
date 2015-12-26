@@ -1,15 +1,20 @@
 package fhj.swengb.project.remoty
 
 
+import java.io.File
 import java.net.URL
+import java.nio.file.{Files, FileSystems, FileSystem, Path}
 import java.util.ResourceBundle
 import javafx.application.Application
+import javafx.event.EventHandler
 import javafx.fxml.{FXML, Initializable, FXMLLoader}
-import javafx.scene.control.{TreeView,TreeItem}
+import javafx.scene.control.{Label, TreeView, TreeItem}
 import javafx.scene.image.{ImageView, Image}
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.{Pane, StackPane, BorderPane}
 import javafx.scene.{Scene, Parent}
 import javafx.stage.Stage
+import javax.swing.filechooser.FileSystemView
 
 import scala.util.control.NonFatal
 
@@ -53,31 +58,63 @@ class RemotyAppController extends Initializable {
 
   @FXML var pane_view: Pane = _
   @FXML var tree_view: TreeView[String] = _
+  //a label to show the actions of the mouseEventHandler
+  @FXML var msg_out: Label = _
 
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     //set the rootItem to the tree_view
     tree_view.setRoot(rootItem)
 
-
+    //initialize the mouseEventHandler on the TreeView
+    tree_view.setOnMouseClicked(mouseEvent)
   }
 
+
   //set a value for the picture of an folder Icon and use it for TreeItems
-  val picture: Image = new Image("/fhj/swengb/project/remoty/genericFolderYellow.png")
+  val pictureFolder: Image = new Image("/fhj/swengb/project/remoty/folder.png")
+  val pictureFile: Image = new Image("/fhj/swengb/project/remoty/file.png")
 
 
   //make a root
   //second argument in TreeItem is a new ImageView with the "picture" value in it and then it will show an folder icon in the treeview
-  val rootItem: TreeItem[String] = new TreeItem("Root",new ImageView(picture))
+  //with "System.getenv("SystemDrive") you can get the letter of drive...
+  val rootItem: TreeItem[String] = new TreeItem(System.getenv("SystemDrive"),new ImageView(pictureFolder))
+  //the rootItem is expanded in default case
+  rootItem.setExpanded(true)
 
+  /*
   //make subroots
   val item: TreeItem[String] = new TreeItem[String]("Subroot")
   //add subroots to rootItem
   rootItem.getChildren.addAll(item)
+*/
+
+//a mouseEventHandler which is for the TreeView
+  val mouseEvent: EventHandler[_ >: MouseEvent] = new EventHandler[MouseEvent] {
+    override def handle(event: MouseEvent): Unit = {
+      event.getSource match {
+        case clicked: TreeView[String] => msg_out.setText("You clicked on:  " + clicked.getSelectionModel.getSelectedItem.getValue)
+      }
+    }
+  }
 
 
 
+  //first set the directory as string
+  val directory: String = """C:\"""
 
+  //use the array to store all files which are in the directory with list files
+    val files: Array[File] = new File(directory).listFiles()
+
+  //iterate trough files and set them as subItems to the RootItem "C:"
+  //NEED TO evaluate how to also get directories
+  for(file: File <- files){
+    if(file.isFile){
+      val item = new TreeItem[String](file.getAbsolutePath,new ImageView(pictureFile))
+      rootItem.getChildren.add(item)
+    }
+  }
 
 
 
