@@ -61,41 +61,28 @@ class RemotyAppController extends Initializable {
 
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    //set the rootItem to the tree_view
-    tree_view.setRoot(rootItem)
-
-    //initialize the mouseEventHandler on the TreeView
-    tree_view.setOnMouseClicked(mouseEvent)
+   initializeALl()
   }
 
 
-  //set a value for the picture of an folder Icon and use it for TreeItems
+  /**
+    * set a value for the picture of an folder Icon or file icon and use it for TreeItems
+    */
+
   val pictureFolder: Image = new Image("/fhj/swengb/project/remoty/folder.png")
   val pictureFile: Image = new Image("/fhj/swengb/project/remoty/file.png")
 
 
-  //make a root
-  //second argument in TreeItem is a new ImageView with the "picture" value in it and then it will show an folder icon in the treeview
-  //with "System.getenv("SystemDrive") you can get the letter of drive...
+  /**
+    * Makes a rootItem
+    * second argument in TreeItem is a new ImageView with the "picture" value in it and then it will show an folder icon in the treeview
+    * with "System.getenv("SystemDrive") you can get the letter of the system drive...
+    */
+
   val rootItem: TreeItem[String] = new TreeItem(System.getenv("SystemDrive"), new ImageView(pictureFolder))
   //the rootItem is expanded in default case
   rootItem.setExpanded(true)
 
-  /*
-  //make subroots
-  val item: TreeItem[String] = new TreeItem[String]("Subroot")
-  //add subroots to rootItem
-  rootItem.getChildren.addAll(item)
-*/
-
-  //a mouseEventHandler which is for the TreeView
-  val mouseEvent: EventHandler[_ >: MouseEvent] = new EventHandler[MouseEvent] {
-    override def handle(event: MouseEvent): Unit = {
-      event.getSource match {
-        case clicked: TreeView[String] => msg_out.setText("You clicked on:  " + clicked.getSelectionModel.getSelectedItem.getValue)
-      }
-    }
-  }
 
 
   /**
@@ -105,8 +92,9 @@ class RemotyAppController extends Initializable {
     *
     **/
 
+val path: String = """C:\"""
   //first set the directory as string
-  val directoryPath: File = new File( """C:\""")
+  val directoryPath: File = new File(path)
 
   //use the array to store all files which are in the directory with list files
   displayDirectoryContent(directoryPath)
@@ -132,7 +120,36 @@ class RemotyAppController extends Initializable {
     }
 
   }
+
+
+  //a mouseEventHandler which is for the TreeView
+  val mouseEvent: EventHandler[_ >: MouseEvent] = new EventHandler[MouseEvent] {
+    override def handle(event: MouseEvent): Unit = {
+      event.getSource match {
+        case clicked: TreeItem[String] => msg_out.setText("You clicked on:  " + clicked.getValue)
+        case clicked2: TreeView[String] => msg_out.setText("You clicked on:  " + clicked2.getSelectionModel.getSelectedItem.getValue)
+      }
+    }
+  }
+
+
+
+
+
+def initializeALl(): Unit = {
+  //set the rootItem to the tree_view
+  tree_view.setRoot(rootItem)
+
+  //initialize the mouseEventHandler on the TreeView
+  tree_view.setOnMouseClicked(mouseEvent)
 }
+
+
+
+
+
+}
+
 
 
 

@@ -10,7 +10,7 @@
       <TreeView fx:id="tree_view" layoutX="32.0" layoutY="68.0" prefHeight="345.0" prefWidth="518.0" />
       <Label fx:id="msg_out" layoutX="28.0" layoutY="428.0" prefHeight="31.0" prefWidth="518.0">
          <font>
-            <Font name="System Bold" size="18.0" />
+            <Font name="System Bold" size="16.0" />
          </font>
       </Label>
    </children>
