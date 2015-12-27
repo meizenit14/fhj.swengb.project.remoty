@@ -101,17 +101,15 @@ class RemotyAppController extends Initializable {
   /**
     *
     * Iterates over the files and directories of the given directory and enters it in the treeview
-    * EDIT: IT WORKS LIKE A CHARM
+    * EDIT: IT WORKS LIKE A CHARM except a lot of NullPointerExceptions!!
     *
-    *
-    */
-
+    **/
 
   //first set the directory as string
-  val directory: File = new File( """C:\""")
+  val directoryPath: File = new File( """C:\""")
 
   //use the array to store all files which are in the directory with list files
-  displayDirectoryContent(directory)
+  displayDirectoryContent(directoryPath)
 
   //iterate trough files and set them as subItems to the RootItem "C:"
   def displayDirectoryContent(dir: File,parent: TreeItem[String] = rootItem): Unit = {
