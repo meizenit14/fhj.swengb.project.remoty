@@ -77,7 +77,7 @@ class RemotyAppController extends Initializable {
   //make a root
   //second argument in TreeItem is a new ImageView with the "picture" value in it and then it will show an folder icon in the treeview
   //with "System.getenv("SystemDrive") you can get the letter of drive...
-  val rootItem: TreeItem[String] = new TreeItem(System.getenv("SystemDrive"),new ImageView(pictureFolder))
+  val rootItem: TreeItem[String] = new TreeItem(System.getenv("SystemDrive"), new ImageView(pictureFolder))
   //the rootItem is expanded in default case
   rootItem.setExpanded(true)
 
@@ -88,7 +88,7 @@ class RemotyAppController extends Initializable {
   rootItem.getChildren.addAll(item)
 */
 
-//a mouseEventHandler which is for the TreeView
+  //a mouseEventHandler which is for the TreeView
   val mouseEvent: EventHandler[_ >: MouseEvent] = new EventHandler[MouseEvent] {
     override def handle(event: MouseEvent): Unit = {
       event.getSource match {
@@ -99,46 +99,42 @@ class RemotyAppController extends Initializable {
 
 
   /**
-    * 
+    *
     * Iterates over the files and directories of the given directory and enters it in the treeview
+    * EDIT: IT WORKS LIKE A CHARM
+    *
     *
     */
 
+
   //first set the directory as string
-  val directory: File = new File("""C:\""")
+  val directory: File = new File( """C:\""")
 
   //use the array to store all files which are in the directory with list files
   displayDirectoryContent(directory)
 
   //iterate trough files and set them as subItems to the RootItem "C:"
-  def displayDirectoryContent(dir: File): Unit = {
-    try{
-    val files: Array[File] = dir.listFiles()
-    for(content <- files){
-      if(content.isFile && !content.isHidden){
-        val item = new TreeItem[String](content.getAbsolutePath,new ImageView(pictureFile))
-        rootItem.getChildren.add(item)
+  def displayDirectoryContent(dir: File,parent: TreeItem[String] = rootItem): Unit = {
+    try {
+      val files: Array[File] = dir.listFiles()
+      for (content <- files) {
+        if (content.isFile && !content.isHidden) {
+          val file = new TreeItem[String](content.getAbsolutePath, new ImageView(pictureFile))
+          parent.getChildren.add(file)
+        }
+        else if (content.isDirectory && !content.isHidden) {
+          val subdir = new TreeItem[String](content.getAbsolutePath, new ImageView(pictureFolder))
+          parent.getChildren.add(subdir)
+          displayDirectoryContent(content,subdir)
+        }
       }
-      else if(content.isDirectory && !content.isHidden){
-        val item2 = new TreeItem[String](content.getAbsolutePath,new ImageView(pictureFolder))
-        rootItem.getChildren.add(item2)
-        displayDirectoryContent(content)
-
-      }
-    }
-
-  }catch {
+    } catch {
       case e: IOException => e.printStackTrace()
       case n: NullPointerException => n.printStackTrace()
     }
 
   }
-
-
-
-  }
-
-
-
 }
+
+
 
