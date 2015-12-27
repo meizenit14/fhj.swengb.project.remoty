@@ -92,7 +92,7 @@ class RemotyAppController extends Initializable {
     * with "System.getenv("SystemDrive") you can get the letter of the system drive...
     */
 
-  val rootItem: TreeItem[String] = new TreeItem[String](s"""$path""".toString, new ImageView(pictureFolder))
+  val rootItem: TreeItem[String] = new TreeItem[String](path, new ImageView(pictureFolder))
   //the rootItem is expanded in default case
   rootItem.setExpanded(true)
 
