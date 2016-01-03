@@ -55,7 +55,7 @@ class RemotyApp extends javafx.application.Application {
 class RemotyAppController extends Initializable {
 
   @FXML var pane_view: Pane = _
-  @FXML var tree_view: TreeView[String] = _
+  @FXML var tree_view: TreeView[File] = _
   //a label to show the actions of the mouseEventHandler
   @FXML var msg_out: Label = _
 
@@ -92,7 +92,7 @@ class RemotyAppController extends Initializable {
     * with "System.getenv("SystemDrive") you can get the letter of the system drive...
     */
 
-  val rootItem: TreeItem[String] = new TreeItem[String](path, new ImageView(pictureFolder))
+  val rootItem: TreeItem[File] = new TreeItem[File] //new ImageView(pictureFolder))
   //the rootItem is expanded in default case
   rootItem.setExpanded(true)
 
@@ -109,16 +109,16 @@ class RemotyAppController extends Initializable {
   displayDirectoryContent(directoryPath,parent = rootItem)
 
   //iterate trough files and set them as subItems to the RootItem "C:"
-  def displayDirectoryContent(dir: File,parent: TreeItem[String] = rootItem): Unit = {
+  def displayDirectoryContent(dir: File,parent: TreeItem[File] = rootItem): Unit = {
     try {
       val files: Array[File] = dir.listFiles()
       for (content <- files) {
         if (content.isFile && !content.isHidden) {
-          val file = new TreeItem[String](content.getName, new ImageView(pictureFile))
+          val file = new TreeItem[File](content, new ImageView(pictureFile))
           parent.getChildren.add(file)
         }
         else if (content.isDirectory && !content.isHidden) {
-          val subdir = new TreeItem[String](content.getName, new ImageView(pictureFolder))
+          val subdir = new TreeItem[File](content, new ImageView(pictureFolder))
           parent.getChildren.add(subdir)
           displayDirectoryContent(content,subdir)
         }
