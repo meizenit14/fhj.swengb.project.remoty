@@ -137,7 +137,7 @@ class RemotyAppController extends Initializable {
   val mouseEvent: EventHandler[_ >: MouseEvent] = new EventHandler[MouseEvent] {
     override def handle(event: MouseEvent): Unit = {
       event.getSource match {
-        case clicked: TreeView[String] => msg_out.setText(clicked.getSelectionModel.getSelectedItem.getValue)
+        case clicked: TreeView[_] => msg_out.setText(clicked.getSelectionModel.getSelectedItem.getValue.toString)
       }
     }
   }
