@@ -98,50 +98,6 @@ class RemotyAppController extends Initializable {
 
 
 
-  /**
-    *
-    * Iterates over the files and directories of the given directory and enters it in the treeview
-    * EDIT: IT WORKS LIKE A CHARM except a lot of NullPointerExceptions!!
-    *
-    **/
-
-  //use the array to store all files which are in the directory with list files
-  displayDirectoryContent(directoryPath,parent = rootItem)
-
-  //iterate trough files and set them as subItems to the RootItem "C:"
-  def displayDirectoryContent(dir: File,parent: TreeItem[File] = rootItem): Unit = {
-    try {
-      val files: Array[File] = dir.listFiles
-      for (content <- files) {
-        if (content.isFile && !content.isHidden) {
-          parent.getChildren.add(new TreeItem[File](content, new ImageView(pictureFile)))
-        }
-        else if (content.isDirectory && !content.isHidden) {
-          val subdir = new TreeItem[File](content, new ImageView(pictureFolder))
-          parent.getChildren.add(subdir)
-          displayDirectoryContent(content, subdir)
-        }
-      }
-    }catch{
-      case e: IOException => e.printStackTrace()
-      case n: NullPointerException => n.printStackTrace()
-    }
-  }
-
-
-  /**
-    * A mouseEventHandler for the TreeView which
-    * @return the path of the TreeItem clicked on
-    */
-
-  val mouseEvent: EventHandler[_ >: MouseEvent] = new EventHandler[MouseEvent] {
-    override def handle(event: MouseEvent): Unit = {
-      event.getSource match {
-        case clicked: TreeView[_] => msg_out.setText(clicked.getSelectionModel.getSelectedItem.getValue.toString)
-      }
-    }
-  }
-
 
 
   def initializeALl(): Unit = {
@@ -149,7 +105,7 @@ class RemotyAppController extends Initializable {
   tree_view.setRoot(rootItem)
 
   //initialize the mouseEventHandler on the TreeView
-  tree_view.setOnMouseClicked(mouseEvent)
+    //tree_view.setOnMouseClicked(mouseEvent)
   }
 
 
