@@ -80,7 +80,7 @@ class RemotyAppController extends Initializable {
     * directoryPath -> makes a new File out of the given path and gives it to the recursive function
     */
 
-  val path: String = "C:/Users/Amar".replace("/","\\").trim
+  val path: String = "C:/Users/chris".replace("/","\\").trim
   //first set the directory as string
   val directoryPath: File = new File(path)
 
