@@ -3,6 +3,8 @@ package fhj.swengb.project.remoty
 
 import java.io.{IOException, File}
 import java.net.URL
+import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file._
 import java.util.ResourceBundle
 import javafx.application.Application
 import javafx.event.EventHandler
@@ -13,7 +15,7 @@ import javafx.scene.input.{MouseButton, ContextMenuEvent, MouseEvent}
 import javafx.scene.layout.{Pane, StackPane, BorderPane}
 import javafx.scene.{Scene, Parent}
 import javafx.stage.Stage
-
+import java.util
 import scala.util.control.NonFatal
 
 /**
@@ -80,13 +82,11 @@ class RemotyAppController extends Initializable {
     * directoryPath -> makes a new File out of the given path and gives it to the recursive function
     */
 
-  val path: String = "C:/Users/chris".replace("/","\\").trim
-  //first set the directory as string
-  val directoryPath: File = new File(path)
 
 
 
-  /**
+
+  /*/**
     * Makes a rootItem
     * second argument in TreeItem is a new ImageView with the "picture" value in it and then it will show an folder icon in the treeview
     * with "System.getenv("SystemDrive") you can get the letter of the system drive...
@@ -128,7 +128,7 @@ class RemotyAppController extends Initializable {
       case n: NullPointerException => n.printStackTrace()
     }
 
-  }
+  }*/
 
 
   /**
@@ -139,17 +139,95 @@ class RemotyAppController extends Initializable {
   val mouseEvent: EventHandler[_ >: MouseEvent] = new EventHandler[MouseEvent] {
     override def handle(event: MouseEvent): Unit = {
       event.getSource match {
-        case clicked: TreeView[String] => msg_out.setText(clicked.getSelectionModel.getSelectedItem.getValue)
+        case clicked: TreeView[String] => printRecursive(Paths.get(clicked.getSelectionModel.getSelectedItem.getValue))
+        //case clicked: TreeView[String] => println((path + clicked.getSelectionModel.getSelectedItem.getValue))
       }
     }
   }
+
+  /**
+    * Makes a rootItem
+    * second argument in TreeItem is a new ImageView with the "picture" value in it and then it will show an folder icon in the treeview
+    * with "System.getenv("SystemDrive") you can get the letter of the system drive...
+    */
+
+  val rootPath: String = "C:/Users/Chris/Desktop/Test/"
+  //first set the directory as string
+  //val directoryPath: File = new File(path)
+
+
+  val root: TreeItem[String] = new TreeItem[String](rootPath, new ImageView(pictureFolder))
+  //the rootItem is expanded in default case
+  root.setExpanded(true)
+
+  val path1 = Paths.get(rootPath)
+  val opts = util.EnumSet.of(FileVisitOption.FOLLOW_LINKS)
+
+
+  def printRecursive(path: Path): Unit = {
+    Files.walkFileTree(path, opts,1, new SimpleFileVisitor[Path]() {
+      override def visitFile(path: Path, attrs: BasicFileAttributes): FileVisitResult = {
+        //println(path)
+        //println(attrs.size())
+        //println(attrs.isDirectory())
+
+        if (attrs.isDirectory()){
+          val subdir = new TreeItem[String](path.toString, new ImageView(pictureFolder))
+          root.getChildren.add(subdir)
+
+          val path2 = path
+          //val path2 = Paths.get(newPath)
+
+          Files.walkFileTree(path2, opts,1, new SimpleFileVisitor[Path]() {
+
+            override def visitFile(path: Path, attrs: BasicFileAttributes): FileVisitResult = {
+              if(attrs.isDirectory()) {
+                subdir.isExpanded()
+              }
+              else {
+                subdir.isExpanded()
+              }
+
+              FileVisitResult.TERMINATE
+
+            }
+
+
+          })
+        }
+
+        else{
+          val file = new TreeItem[String](path.toString, new ImageView(pictureFile))
+          root.getChildren.add(file)
+        }
+
+        FileVisitResult.CONTINUE
+      }
+
+      override def visitFileFailed(path: Path, exc: IOException): FileVisitResult = {
+        println(path + " failed")
+        FileVisitResult.CONTINUE;
+      }
+
+      /*override def postVisitDirectory(dir: Path, exc: IOException): FileVisitResult = {
+        if (exc == null) {
+          println(dir)
+          FileVisitResult.CONTINUE
+        } else {
+          throw exc
+        }
+      }*/
+    }
+    )
+  }
+
 
 
 
   def initializeALl(): Unit = {
   //set the rootItem to the tree_view
-  tree_view.setRoot(rootItem)
-
+  tree_view.setRoot(root)
+  printRecursive(path1)
   //initialize the mouseEventHandler on the TreeView
   tree_view.setOnMouseClicked(mouseEvent)
   }
