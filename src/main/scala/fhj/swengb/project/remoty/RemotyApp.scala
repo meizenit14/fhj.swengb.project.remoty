@@ -5,6 +5,7 @@ import java.io.{IOException, File}
 import java.net.URL
 import java.util.ResourceBundle
 import javafx.application.Application
+import javafx.collections.{FXCollections, ObservableList}
 import javafx.event.EventHandler
 import javafx.fxml.{FXML, Initializable, FXMLLoader}
 import javafx.scene.control._
@@ -13,6 +14,9 @@ import javafx.scene.input.{MouseButton, ContextMenuEvent, MouseEvent}
 import javafx.scene.layout.{Pane, StackPane, BorderPane}
 import javafx.scene.{Scene, Parent}
 import javafx.stage.Stage
+
+//is important import in order to check if it isDirectory...wtf
+import scala.collection.JavaConversions._
 
 import scala.util.control.NonFatal
 
@@ -73,22 +77,26 @@ class RemotyAppController extends Initializable {
   val pictureFile: Image = new Image("/fhj/swengb/project/remoty/file.png")
 
 
+  /**
+    * Set the path you want to display in the TreeView here!
+    */
+  val path: String = "C:/Users/Amar".replace("/","\\").trim
+
 
   /**
-    * SET THE PATH which you want to be shown in the TreeView
-    * path -> is the path chosen from your own system. HERE YOU HAVE TO SET ANY PATH YOU WANT!
-    * directoryPath -> makes a new File out of the given path and gives it to the recursive function
+    * Calls the method from the TreeViewUtil file and makes an ObservableList which contains all Files of the given Path.
+    * @param pathAsString
+    * @return ObservableList[File]
     */
+  def pathFiles(pathAsString: String): ObservableList[File] = TreeViewUtil.createObservableList(new File(pathAsString).listFiles())
 
-  val path: String = "C:/".replace("/","\\").trim
-  //first set the directory as string
-  val directoryPath: File = new File(path)
+
 
 
 
   /**
     * Makes a rootItem
-    * second argument in TreeItem is a new ImageView with the "picture" value in it and then it will show an folder icon in the treeview
+    * second argument in TreeItem is a new ImageView with the "picture" value in it and then it will show an folder icon in the TreeView
     * with "System.getenv("SystemDrive") you can get the letter of the system drive...
     */
 
@@ -97,16 +105,57 @@ class RemotyAppController extends Initializable {
   rootItem.setExpanded(true)
 
 
-
-
+  /**
+    * Initializes all necessary things for the initialize override method at the beginning
+    */
 
   def initializeALl(): Unit = {
-  //set the rootItem to the tree_view
-  tree_view.setRoot(rootItem)
+    //set the rootItem to the tree_view
+    tree_view.setRoot(rootItem)
 
-  //initialize the mouseEventHandler on the TreeView
+    //set the cellValueFactories
+   // tree_view.setCellFactory(TreeViewUtil.cellFactoryCaller(TreeViewUtil.toString))
+
+    //initialize the mouseEventHandler on the TreeView
     //tree_view.setOnMouseClicked(mouseEvent)
   }
+
+
+
+
+  //####################TRY OUT STUFF###########################
+
+/*
+  //use the array to store all files which are in the directory with list files
+  displayDirectoryContent(directoryPath,parent = rootItem)
+
+  //iterate trough files and set them as subItems to the RootItem "C:"
+  def displayDirectoryContent(dir: File,parent: TreeItem[File] = rootItem): Unit = {
+    try {
+      val files: Array[File] = dir.listFiles
+      for (content <- files) {
+        if (content.isFile && !content.isHidden) {
+          parent.getChildren.add(new TreeItem[File](content, new ImageView(pictureFile)))
+        }
+        else if (content.isDirectory && !content.isHidden) {
+          val subdir = new TreeItem[File](content, new ImageView(pictureFolder))
+          parent.getChildren.add(subdir)
+          displayDirectoryContent(content, subdir)
+        }
+      }
+    }catch{
+      case e: IOException => e.printStackTrace()
+      case n: NullPointerException => n.printStackTrace()
+    }
+  }
+*/
+
+
+
+
+
+
+
 
 
 
