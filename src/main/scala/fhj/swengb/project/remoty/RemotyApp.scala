@@ -7,6 +7,7 @@ import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file._
 import java.util.ResourceBundle
 import javafx.application.Application
+import javafx.embed.swt.SWTFXUtils
 import javafx.event.EventHandler
 import javafx.fxml.{FXML, Initializable, FXMLLoader}
 import javafx.scene.control._
@@ -16,6 +17,7 @@ import javafx.scene.layout.{Pane, StackPane, BorderPane}
 import javafx.scene.{Scene, Parent}
 import javafx.stage.Stage
 import java.util
+import scala.collection.mutable
 import scala.util.control.NonFatal
 
 /**
@@ -136,14 +138,15 @@ class RemotyAppController extends Initializable {
     * @return the path of the TreeItem clicked on
     */
 
-  val mouseEvent: EventHandler[_ >: MouseEvent] = new EventHandler[MouseEvent] {
-    override def handle(event: MouseEvent): Unit = {
-      event.getSource match {
-        case clicked: TreeView[String] => printRecursive(Paths.get(clicked.getSelectionModel.getSelectedItem.getValue))
-        //case clicked: TreeView[String] => println((path + clicked.getSelectionModel.getSelectedItem.getValue))
+      val mouseEvent: EventHandler[_ >: MouseEvent] = new EventHandler[MouseEvent] {
+        override def handle(event: MouseEvent): Unit = {
+          event.getSource match {
+            case clicked: TreeView[String] => treeRecursive(Paths.get(clicked.getSelectionModel.getSelectedItem.getValue))
+            //case clicked: TreeView[String] => println((clicked.getSelectionModel.getSelectedItem.getValue))
+          }
+        }
       }
-    }
-  }
+
 
   /**
     * Makes a rootItem
@@ -151,83 +154,107 @@ class RemotyAppController extends Initializable {
     * with "System.getenv("SystemDrive") you can get the letter of the system drive...
     */
 
-  val rootPath: String = "C:/Users/Chris/Desktop/Test/"
+
+  //val rootPath: String = "C:/"
   //first set the directory as string
   //val directoryPath: File = new File(path)
 
-
+  val rootPath: String = "C:/Test/"
+  val path1 = Paths.get(rootPath)
   val root: TreeItem[String] = new TreeItem[String](rootPath, new ImageView(pictureFolder))
   //the rootItem is expanded in default case
   root.setExpanded(true)
 
-  val path1 = Paths.get(rootPath)
-  val opts = util.EnumSet.of(FileVisitOption.FOLLOW_LINKS)
 
+ /* val nodes: scala.collection.mutable.Map[String, TreeItem] = scala.collection.mutable.Map[String, TreeItem]()
+  val children: scala.collection.mutable.Map[TreeItem, util.List[String]] = scala.collection.mutable.Map[TreeItem, util.List[String]]()
 
-  def printRecursive(path: Path): Unit = {
-    Files.walkFileTree(path, opts,1, new SimpleFileVisitor[Path]() {
+  def treeRecursive(path: Path): Unit = {
+    Files.walkFileTree(path, new SimpleFileVisitor[Path]() {
+
+      override def preVisitDirectory(path: Path, attrs: BasicFileAttributes): FileVisitResult = {
+
+        val parent: Option[TreeItem] = nodes.get(path.getParent().toString())
+        var item:TreeItem[String] = null
+
+        if (parent.get == null) {
+           item = root
+        }
+        else {
+           item = new TreeItem[String](parent.get.toString(), new ImageView(pictureFolder))
+        }
+
+        item.setValue(path.getFileName().toString())
+
+        return  FileVisitResult.CONTINUE
+      }
+
       override def visitFile(path: Path, attrs: BasicFileAttributes): FileVisitResult = {
-        //println(path)
-        //println(attrs.size())
-        //println(attrs.isDirectory())
 
-        if (attrs.isDirectory()){
-          val subdir = new TreeItem[String](path.toString, new ImageView(pictureFolder))
-          root.getChildren.add(subdir)
+        val parent = nodes.get(path.getParent().toString())
 
-          val path2 = path
-          //val path2 = Paths.get(newPath)
+        if(children.get(parent.get) == null){
+          children.put(parent.get, new util.List[String])
+        }
 
-          Files.walkFileTree(path2, opts,1, new SimpleFileVisitor[Path]() {
+        children.get(parent.get).addString(new StringBuilder(path.getFileName().toString()))
+
+
+        return  FileVisitResult.CONTINUE
+      }
+
+
+
+    })*/
+
+
+      val opts = util.EnumSet.of(FileVisitOption.FOLLOW_LINKS)
+
+      def treeRecursive(path: Path): Unit = {
+
+          Files.walkFileTree(path,opts, 1, new SimpleFileVisitor[Path]() {
 
             override def visitFile(path: Path, attrs: BasicFileAttributes): FileVisitResult = {
-              if(attrs.isDirectory()) {
-                subdir.isExpanded()
+
+
+              if (attrs.isDirectory()){
+                val subdir = new TreeItem[String](path.toString, new ImageView(pictureFolder))
+                root.getChildren.add(subdir)
               }
-              else {
-                subdir.isExpanded()
+              else{
+                val file = new TreeItem[String](path.toString, new ImageView(pictureFile))
+                root.getChildren.add(file)
               }
 
-              FileVisitResult.TERMINATE
-
+              FileVisitResult.CONTINUE
             }
 
+            override def visitFileFailed(path: Path, exc: IOException): FileVisitResult = {
+              println(path + " failed")
+              FileVisitResult.CONTINUE;
+            }
 
-          })
+          } )
         }
-
-        else{
-          val file = new TreeItem[String](path.toString, new ImageView(pictureFile))
-          root.getChildren.add(file)
-        }
-
-        FileVisitResult.CONTINUE
-      }
-
-      override def visitFileFailed(path: Path, exc: IOException): FileVisitResult = {
-        println(path + " failed")
-        FileVisitResult.CONTINUE;
-      }
-
-      /*override def postVisitDirectory(dir: Path, exc: IOException): FileVisitResult = {
-        if (exc == null) {
-          println(dir)
-          FileVisitResult.CONTINUE
-        } else {
-          throw exc
-        }
-      }*/
-    }
-    )
-  }
 
 
 
 
   def initializeALl(): Unit = {
+
+   /* treeRecursive(path1)
+
+    for((k,v)<- children){
+
+      for(child <- children.get(k)){
+
+        var item = new TreeItem[String](k.toString(), new ImageView(pictureFile))
+      }
+    }*/
+
   //set the rootItem to the tree_view
   tree_view.setRoot(root)
-  printRecursive(path1)
+  //printRecursive(path1)
   //initialize the mouseEventHandler on the TreeView
   tree_view.setOnMouseClicked(mouseEvent)
   }
