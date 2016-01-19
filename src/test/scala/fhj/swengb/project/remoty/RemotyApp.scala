@@ -1,5 +1,6 @@
 package fhj.swengb.project.remoty
 
+
 import java.io.{File, IOException}
 import java.net.URL
 import java.nio.file._
@@ -16,6 +17,13 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.{Parent, Scene}
 import javafx.stage.Stage
+
+import org.eclipse.fx.ui.controls.filesystem.DirectoryTreeView;
+import org.eclipse.fx.ui.controls.filesystem.DirectoryView;
+import org.eclipse.fx.ui.controls.filesystem.IconSize;
+import org.eclipse.fx.ui.controls.filesystem.ResourceItem;
+import org.eclipse.fx.ui.controls.filesystem.ResourcePreview;
+import org.eclipse.fx.ui.controls.filesystem.RootDirItem;
 
 import scala.util.control.NonFatal
 
