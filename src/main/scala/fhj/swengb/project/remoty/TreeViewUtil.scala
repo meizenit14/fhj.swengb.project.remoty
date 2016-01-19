@@ -1,7 +1,9 @@
 package fhj.swengb.project.remoty
 
 import javafx.collections.{FXCollections, ObservableList}
-import javafx.scene.control.{TreeView, TreeCell}
+import javafx.event.EventHandler
+import javafx.scene.control.{TextField, TreeView, TreeCell}
+import javafx.scene.input.{KeyCode, KeyEvent}
 import javafx.util.Callback
 import scala.collection.JavaConversions
 import JavaConversions._
@@ -19,10 +21,10 @@ object TreeViewUtil {
     * Callback which is called and renders new Cells for the new Items.
     */
 
-    //The cell factory mechanism is used for generating TreeCell instances to represent a single TreeItem in the TreeView.
-    // Using cell factories is particularly helpful when your application operates with an excessive amount of data that is changed dynamically or added on demand.
+  //The cell factory mechanism is used for generating TreeCell instances to represent a single TreeItem in the TreeView.
+  // Using cell factories is particularly helpful when your application operates with an excessive amount of data that is changed dynamically or added on demand.
 
-   def cellFactoryCaller[T](func: TreeView[T] => TreeCell[T]): Callback[TreeView[T], TreeCell[T]] = {
+  def cellFactoryCaller[T](func: TreeView[T] => TreeCell[T]): Callback[TreeView[T], TreeCell[T]] = {
     //making a Callback which is needed for making new CellFactories which makes new Cells.
     new Callback[TreeView[T], TreeCell[T]] {
       def call(convert: TreeView[T]): TreeCell[T] = func(convert)
@@ -36,11 +38,11 @@ object TreeViewUtil {
     */
 
 
-    def createObservableList[T](iterable: Iterable[T] = List()): ObservableList[T] = {
-      //val arrayList = new java.util.ArrayList[T]
-      //arrayList.addTll(iterable)
-      FXCollections.observableList(new java.util.ArrayList[T](iterable))
-    }
+  def createObservableList[T](iterable: Iterable[T] = List()): ObservableList[T] = {
+    //val arrayList = new java.util.ArrayList[T]
+    //arrayList.addTll(iterable)
+    FXCollections.observableList(new java.util.ArrayList[T](iterable))
+  }
 
 
   /**
@@ -53,28 +55,91 @@ object TreeViewUtil {
   //coming soon...
 
 
-
-
   /**
-    * Now we need to display it and update changes or new rendered CellFactories
-    * It is been used when setting a CellFactory and updating items or an Cell is changed then it is getting
-    * rendered again but with the changed data...
+    *
+    * With this method we are updating after the Callback our TreeCell so we are calling Treecells
     *
     * Source: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/Cell.html
     */
 
-    //making a new class which extends the TreeCell class in order to use the itemUpdate func.
-
-    def toString[T](con: T => String)(f: TreeView[T]): TreeCell[T] = {
-      class Cell extends TreeCell[T] {
-        override protected def updateItem(t: T, empty: Boolean): Unit = {
-          super.updateItem(t,empty)
-          if (t != null){
-            setText(con(t))
-          }
-          else setText(null)
+  def toString[T](con: T => String)(f: TreeView[T]): TreeCell[T] = {
+    class Cell extends TreeCell[T] {
+      override protected def updateItem(t: T, empty: Boolean): Unit = {
+        super.updateItem(t, empty)
+        if (t != null) {
+          setText(con(t))
         }
+        else setText(null)
       }
+    }
     new Cell
   }
-}
+
+
+  /**
+    * tried to make a TreeCellImplementation to rename TreeItems
+    */
+
+  class TextFieldTreeCellImpl extends TreeCell[String] {
+
+      var textfield: TextField = _
+
+      override def startEdit(): Unit = {
+        super.startEdit()
+        if (textfield == null) {
+          createTextField()
+        }
+        setText(null)
+        setGraphic(textfield)
+        textfield.selectAll()
+      }
+
+
+      override def cancelEdit() {
+        super.cancelEdit()
+        setText(getItem)
+        setGraphic(getTreeItem.getGraphic)
+      }
+
+      override def updateItem(item: String, empty: Boolean): Unit = {
+        super.updateItem(item, empty)
+        if (empty) {
+          setText(null)
+          setGraphic(null)
+        }
+        else {
+          if (isEditing) {
+            if (textfield != null) {
+              textfield.setText(getString)
+            }
+            setText(null)
+            setGraphic(textfield)
+          } else {
+            setText(getString)
+            setGraphic(getTreeItem.getGraphic)
+          }
+        }
+      }
+
+      private def createTextField() {
+        textfield = new TextField(getString)
+        textfield.setOnKeyReleased(new EventHandler[KeyEvent]() {
+
+          override def handle(t: KeyEvent) {
+            if (t.getCode == KeyCode.ENTER) {
+              commitEdit(textfield.getText)
+            } else if (t.getCode == KeyCode.ESCAPE) {
+              cancelEdit()
+            }
+          }
+        })
+      }
+
+      private def getString(): String = {
+        if (getItem == null) "" else getItem.toString
+      }
+
+
+    }
+  }
+

@@ -14,6 +14,9 @@ import javafx.scene.input.{MouseButton, ContextMenuEvent, MouseEvent}
 import javafx.scene.layout.{Pane, StackPane, BorderPane}
 import javafx.scene.{Scene, Parent}
 import javafx.stage.Stage
+import javafx.util.Callback
+
+import fhj.swengb.project.remoty.TreeViewUtil.TextFieldTreeCellImpl
 
 //is important import in order to check if it isDirectory...wtf
 import scala.collection.JavaConversions._
@@ -66,6 +69,7 @@ class RemotyAppController extends Initializable {
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
    initializeALl()
+    testinit()
   }
 
 
@@ -85,6 +89,7 @@ class RemotyAppController extends Initializable {
 
   /**
     * Calls the method from the TreeViewUtil file and makes an ObservableList which contains all Files of the given Path.
+    *
     * @param pathAsString
     * @return ObservableList[File]
     */
@@ -114,12 +119,12 @@ class RemotyAppController extends Initializable {
     tree_view.setRoot(rootItem)
 
     //set the cellValueFactories
-   // tree_view.setCellFactory(TreeViewUtil.cellFactoryCaller(TreeViewUtil.toString))
+    // tree_view.setCellFactory(TreeViewUtil.cellFactoryCaller(TreeViewUtil.toString))
 
     //initialize the mouseEventHandler on the TreeView
     //tree_view.setOnMouseClicked(mouseEvent)
-  }
 
+  }
 
 
 
@@ -153,7 +158,27 @@ class RemotyAppController extends Initializable {
 
 
 
+  def testTreeItems(): Unit = {
+    val array: Array[File] = new File("C:\\Users\\Amar").listFiles()
+    for (i <- array) {
+      if (i.isDirectory) {
+        val item = new TreeItem[File](i, new ImageView(pictureFolder))
+        rootItem.getChildren.add(item)
+      }
+      else rootItem.getChildren.add(new TreeItem[File](i,new ImageView(pictureFile)))
+    }
+  }
 
+
+  def testinit(): Unit = {
+
+    tree_view.setEditable(true)
+    tree_view.setCellFactory(TreeViewUtil.cellFactoryCaller {
+      return new TextFieldTreeCellImpl
+    })
+  }
+
+testTreeItems()
 
 
 
