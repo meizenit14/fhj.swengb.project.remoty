@@ -62,7 +62,7 @@ class RemotyApp extends javafx.application.Application {
 class RemotyAppController extends Initializable {
 
   @FXML var pane_view: Pane = _
-  @FXML var tree_view: TreeView[File] = _
+  @FXML var tree_view: TreeView[String] = _
   //a label to show the actions of the mouseEventHandler
   @FXML var msg_out: Label = _
 
@@ -105,7 +105,7 @@ class RemotyAppController extends Initializable {
     * with "System.getenv("SystemDrive") you can get the letter of the system drive...
     */
 
-  var rootItem: TreeItem[File] = new TreeItem[File] //new ImageView(pictureFolder))
+  var rootItem: TreeItem[String] = new TreeItem[String] //new ImageView(pictureFolder))
   //the rootItem is expanded in default case
   rootItem.setExpanded(true)
 
@@ -162,10 +162,10 @@ class RemotyAppController extends Initializable {
     val array: Array[File] = new File("C:\\Users\\Amar").listFiles()
     for (i <- array) {
       if (i.isDirectory) {
-        val item = new TreeItem[File](i, new ImageView(pictureFolder))
+        val item = new TreeItem[String](i.getName, new ImageView(pictureFolder))
         rootItem.getChildren.add(item)
       }
-      else rootItem.getChildren.add(new TreeItem[File](i,new ImageView(pictureFile)))
+      else rootItem.getChildren.add(new TreeItem[String](i.getName,new ImageView(pictureFile)))
     }
   }
 
@@ -176,6 +176,7 @@ class RemotyAppController extends Initializable {
     tree_view.setCellFactory(TreeViewUtil.cellFactoryCaller {
       return new TextFieldTreeCellImpl
     })
+
   }
 
 testTreeItems()

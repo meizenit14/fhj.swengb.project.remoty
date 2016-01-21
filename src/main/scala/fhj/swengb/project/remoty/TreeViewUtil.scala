@@ -1,5 +1,6 @@
 package fhj.swengb.project.remoty
 
+import java.io.File
 import javafx.collections.{FXCollections, ObservableList}
 import javafx.event.EventHandler
 import javafx.scene.control.{TextField, TreeView, TreeCell}
@@ -80,7 +81,28 @@ object TreeViewUtil {
     * tried to make a TreeCellImplementation to rename TreeItems
     */
 
-  class TextFieldTreeCellImpl extends TreeCell[String] {
+
+    class TextFieldTreeCellImpl extends TreeCell[String] {
+
+      override def updateItem(item: String, empty: Boolean): Unit = {
+        super.updateItem(item, empty)
+        if (empty) {
+          setText(null)
+          setGraphic(null)
+        }
+        else {
+          if (isEditing) {
+            if (textfield != null) {
+              textfield.setText(getString())
+            }
+            setText(null)
+            setGraphic(textfield)
+          } else {
+            setText(getString())
+            setGraphic(getTreeItem.getGraphic)
+          }
+        }
+      }
 
       var textfield: TextField = _
 
@@ -101,33 +123,15 @@ object TreeViewUtil {
         setGraphic(getTreeItem.getGraphic)
       }
 
-      override def updateItem(item: String, empty: Boolean): Unit = {
-        super.updateItem(item, empty)
-        if (empty) {
-          setText(null)
-          setGraphic(null)
-        }
-        else {
-          if (isEditing) {
-            if (textfield != null) {
-              textfield.setText(getString)
-            }
-            setText(null)
-            setGraphic(textfield)
-          } else {
-            setText(getString)
-            setGraphic(getTreeItem.getGraphic)
-          }
-        }
-      }
+
 
       private def createTextField() {
-        textfield = new TextField(getString)
+        textfield = new TextField(getString())
         textfield.setOnKeyReleased(new EventHandler[KeyEvent]() {
 
           override def handle(t: KeyEvent) {
             if (t.getCode == KeyCode.ENTER) {
-              commitEdit(textfield.getText)
+              commitEdit(textfield.getText())
             } else if (t.getCode == KeyCode.ESCAPE) {
               cancelEdit()
             }
@@ -141,5 +145,6 @@ object TreeViewUtil {
 
 
     }
+
   }
 
