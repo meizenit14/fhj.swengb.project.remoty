@@ -1,13 +1,20 @@
 package fhj.swengb.project.remoty
 
+import java.io.File
 import java.nio.file.Path
 
 /**
   * Created by chris on 19.01.2016.
+  *
   */
-class PathItem (path:Path) {
 
-  def getPath:Path= {
+object PathItem{
+  def apply(path:Path):PathItem = PathItem(path)
+}
+
+class PathItem (path:Path)  {
+
+def getPath:Path= {
       path
   }
 
