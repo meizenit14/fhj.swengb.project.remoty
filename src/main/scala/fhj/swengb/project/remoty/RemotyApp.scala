@@ -84,6 +84,10 @@ class RemotyAppController extends Initializable {
   @FXML var chooserButton: Button = _
   @FXML var rootLabel: Label = _
 
+  val pictureFolderOpen: Image = new Image("/fhj/swengb/project/remoty/folder-open.png")
+  val pictureFolder: Image = new Image("/fhj/swengb/project/remoty/folder.png")
+  val pictureFile: Image = new Image("/fhj/swengb/project/remoty/file.png")
+
 
   def createNode(pi: PathItem): TreeItem[PathItem] = {
     new TreeItem[PathItem](pi){
@@ -112,13 +116,27 @@ class RemotyAppController extends Initializable {
       def buildChildren(treeItem: TreeItem[PathItem]): ObservableList[TreeItem[PathItem]] = {
         val path:Path = treeItem.getValue.getPath
 
+        treeItem.setGraphic((new ImageView(pictureFolderOpen)))
+
         if(path != null && Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)){
           val children:ObservableList[TreeItem[PathItem]] = FXCollections.observableArrayList()
 
           val dirs = Files.newDirectoryStream(path).toList//.map(stream => stream.iterator().toIterator.toList.map(path => path.getFileName))).getOrElse(List())
 
+
           for(dir <- dirs){
-            children.add(createNode(new PathItem(dir)))
+            var child = createNode(new PathItem(dir))
+            if(Files.isRegularFile(dir, LinkOption.NOFOLLOW_LINKS)){
+              child.setGraphic(new ImageView(pictureFile))
+              children.add(child)
+            }
+
+            else{
+              child.setGraphic(new ImageView(pictureFolder))
+              children.add(child)
+            }
+
+
           }
 
           return children
@@ -142,6 +160,7 @@ class RemotyAppController extends Initializable {
 
   def initializeAll(): Unit = {
 
+
     val chooser = new DirectoryChooser
     chooserButton.setOnAction(new EventHandler[ActionEvent] {
       override def handle(event: ActionEvent): Unit = {
@@ -150,17 +169,19 @@ class RemotyAppController extends Initializable {
           rootLabel.setText(selected.getAbsolutePath)
           val rootPath: String = rootLabel.getText
           val root = Paths.get(rootPath)
-
-          tree_view.setRoot(createNode(new PathItem(root)))
+          val item = createNode(new PathItem(root))
+          item.setExpanded(true)
+          item.setGraphic(new ImageView(pictureFolder))
+          tree_view.setRoot(item)
 
           tree_view.setEditable(true)
+
         }
       }
     })
 
 
-    val pictureFolder: Image = new Image("/fhj/swengb/project/remoty/folder.png")
-    val pictureFile: Image = new Image("/fhj/swengb/project/remoty/file.png")
+
 
 
 
