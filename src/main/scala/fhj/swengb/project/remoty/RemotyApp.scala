@@ -70,6 +70,8 @@ class RemotyAppController extends Initializable {
   @FXML var msg_out: Label = _
   @FXML var chooserButton: Button = _
   @FXML var rootLabel: Label = _
+  //needed for the cellfactory
+
   private var messageProp: SimpleStringProperty = new SimpleStringProperty()
 
 
@@ -100,33 +102,16 @@ class RemotyAppController extends Initializable {
           tree_view.setRoot(item)
           tree_view.setEditable(true)
 
-          /*
-          tree_view.setCellFactory(new Callback[TreeView[PathItem],TreeCell[PathItem]]() {
-            override def call(p: TreeView[PathItem]): TreeCell[PathItem] = new PathTreeCell(stage,)
-          })
-*/
 
-          /**
-          //set the cellfactory
-          tree_view.setCellFactory(new Callback[TreeView[PathItem]] =  {
-            val cell = new PathTreeCell(stage, messageProp)
-            return cell
-          })
-**/
-          /*
           tree_view.setCellFactory(new Callback[TreeView[PathItem],TreeCell[PathItem]]() {
-            override def call(p: TreeView[PathItem]): TreeCell[PathItem] = new PathTreeCell(stage, messageProp)
-          })*/
+            override def call(p: TreeView[PathItem]): TreeCell[PathItem] = new PathTreeCell(stage,messageProp)
+          })
 
         }
       }
     })
 
   }
-
-
-
-
 
 }
 
