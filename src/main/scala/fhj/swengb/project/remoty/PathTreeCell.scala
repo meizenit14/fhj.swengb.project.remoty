@@ -22,11 +22,11 @@ object PathTreeCell{
   def apply(owner:Stage):PathTreeCell = PathTreeCell(owner)
 }
 
-class PathTreeCell(owner: Stage) extends TreeCell[PathItem] {
+class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[PathItem] {
 
   private var textField: TextField = _
   private var editingPath: Path = _
-  private var messageProp: StringProperty = _
+  //private var messageProp: StringProperty = _
   private var dirMenu: ContextMenu = _
   private var fileMenu: ContextMenu = _
 
