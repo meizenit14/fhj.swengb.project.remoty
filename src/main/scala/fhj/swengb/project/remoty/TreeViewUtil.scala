@@ -57,6 +57,9 @@ object TreeViewUtil {
   def stringer[T](input: DirectoryStream[T]): List[T] = input.toList
 
 
+  def mkList[T](input:ObservableList[T]) :List[T] = input.toList
+
+
   /**
     * We need to save the path we want to display (e.g. "C:\") in a List or even better in an ObservableList
     * ObservableLists are capable of listening to changes in the List (for example changing, deleting, etc..)
@@ -80,95 +83,6 @@ object TreeViewUtil {
   //coming soon...
 
 
-  /**
-    * Class PathTreeCell which is implementing a ContextMenu to make actions with it.
-    * You have to set this up on the TreeView with the .setCellValueFactory()
-    */
-
-
-  class PathTreeCell extends TreeCell[PathItem] {
-
-    private var textField: TextField = _
-    private var editingPath: Path = _
-    private var messageProp: StringProperty = _
-    private var dirMenu: ContextMenu = _
-    private var fileMenu: ContextMenu = _
-
-
-    def PathTreeCell(owner: Stage, messageProp: StringProperty): Unit = {
-      this.messageProp = messageProp
-
-      val expandMenu: MenuItem = new MenuItem("Expand")
-      expandMenu.setOnAction(new EventHandler[ActionEvent] {
-        override def handle(event: ActionEvent): Unit = {
-          getTreeItem.setExpanded(true)
-        }
-      })
-
-      val expandAllMenu: MenuItem = new MenuItem("Expand All")
-      expandAllMenu.setOnAction(new EventHandler[ActionEvent]() {
-
-        override def handle(e: ActionEvent) {
-          expandTreeItem(getTreeItem)
-        }
-      })
-
-      }
-
-    def expandTreeItem(item: TreeItem[PathItem]): Unit = item match {
-      case leaf if item.isLeaf =>
-      case noLeaf if !item.isLeaf => {
-        item.setExpanded(true)
-        val children: ObservableList[TreeItem[PathItem]] = item.getChildren
-        children.toList.filter(child => !child.isLeaf).foreach(child => expandTreeItem(child))
-      }
-
-    }
-
-
-    val addMenu: MenuItem = new MenuItem("Add Directory")
-    addMenu.setOnAction(new EventHandler[ActionEvent] {
-      override def handle(event: ActionEvent): Unit = {
-        val newDir: Path = createNewDirectory()
-        if(newDir != null) {
-          val addItem = PathTreeItem.createNode(new PathItem(newDir))
-          getTreeItem.getChildren.add(addItem)
-        }
-      }
-    })
-
-
-    def createNewDirectory(): Path = {
-      var newDir: Path = null
-      while(true) {
-        val path: Path = getTreeItem.getValue.getPath
-        newDir = Paths.get(path.toAbsolutePath.toString, "New Directory " + String.valueOf(getItem))//.getCountNewDir))
-      try {
-        Files.createDirectory(newDir)
-      }
-      catch {
-        case FileAlreadyExistsException => println("File already exists!") //maybe change the println with message pop up etc..
-        case IOException => cancelEdit(); messageProp.setValue(s"Creating directory(${newDir.getFileName}) failed")
-      }
-      }
-      return newDir
-      }
-
-
-      val deleteMenu: MenuItem = new MenuItem("Delete")
-      deleteMenu.setOnAction(new EventHandler[ActionEvent] {
-        override def handle(event: ActionEvent): Unit = {
-          val prop: ObjectProperty[TreeItem[PathItem]] = new SimpleObjectProperty[TreeItem[PathItem]]()
-          new DeleteDialog(owner,getTreeItem,prop) // <-- doesn't work with owner
-          prop.addListener(ObservableValue[TreeItem[PathItem]])
-
-          /**
-            * TO BE CONTINUED....
-            */
-        }
-      })
-
-    }
 
 
   }

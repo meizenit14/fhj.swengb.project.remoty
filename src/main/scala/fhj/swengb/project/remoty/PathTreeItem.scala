@@ -47,14 +47,14 @@ object PathTreeItem {
         //creating root TreeItem
         val path:Path = treeItem.getValue.getPath
 
-        //setting the root TreeItem
+        //set the "folder-open" picture
         treeItem.setGraphic(new ImageView(pictureFolderOpen))
 
         if(path != null && Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)){
           val children:ObservableList[TreeItem[PathItem]] = FXCollections.observableArrayList()
 
           //ruft die Funktion vom File "TreeViewUtil" auf und wandelt einen DirectoryStream in eine Liste um
-          val dirs: List[Path] = TreeViewUtil.stringer(Files.newDirectoryStream(path))
+          val dirs = TreeViewUtil.stringer(Files.newDirectoryStream(path))
 
 
           for(dir: Path <- dirs){
