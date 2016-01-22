@@ -14,7 +14,8 @@ import java.nio.file._
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.value.{ChangeListener, ObservableValue}
+;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -160,11 +161,11 @@ object TreeViewUtil {
         override def handle(event: ActionEvent): Unit = {
           val prop: ObjectProperty[TreeItem[PathItem]] = new SimpleObjectProperty[TreeItem[PathItem]]()
           new DeleteDialog(owner,getTreeItem,prop) // <-- doesn't work with owner
-          prop.addListener(ObservableValue[TreeItem[PathItem]])
+          prop.addListener(new ChangeListener[TreeItem[PathItem]] {
+            override def changed(observable: ObservableValue[_ <: TreeItem[PathItem]], oldValue: TreeItem[PathItem], newValue: TreeItem[PathItem]): Unit = ???
+          })
 
-          /**
-            * TO BE CONTINUED....
-            */
+
         }
       })
 
