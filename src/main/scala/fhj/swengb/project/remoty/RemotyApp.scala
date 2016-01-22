@@ -70,14 +70,24 @@ class RemotyAppController extends Initializable {
   @FXML var chooserButton: Button = _
   @FXML var rootLabel: Label = _
 
-  val pictureFolderOpen: Image = new Image("/fhj/swengb/project/remoty/folder-open.png")
-  val pictureFolder: Image = new Image("/fhj/swengb/project/remoty/folder.png")
-  val pictureFile: Image = new Image("/fhj/swengb/project/remoty/file.png")
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-   initializeALl()
+    initializeAll()
   }
 
+    /**
+      * Setting the pictures for the TreeItems...
+      */
+    val pictureFolderOpen: Image = new Image("/fhj/swengb/project/remoty/folder-open.png")
+    val pictureFolder: Image = new Image("/fhj/swengb/project/remoty/folder.png")
+    val pictureFile: Image = new Image("/fhj/swengb/project/remoty/file.png")
+
+
+  /**
+    * Creating a new TreeItem and checking if it is a leaf or has got children (=no Leaf)
+    * @param pi
+    * @return
+    */
   def createNode(pi: PathItem): TreeItem[PathItem] = {
     new TreeItem[PathItem](pi){
       var isLeaf1: Boolean = _
@@ -103,18 +113,21 @@ class RemotyAppController extends Initializable {
       }
 
       def buildChildren(treeItem: TreeItem[PathItem]): ObservableList[TreeItem[PathItem]] = {
+        //creating root TreeItem
         val path:Path = treeItem.getValue.getPath
 
+        //setting the root TreeItem
         treeItem.setGraphic((new ImageView(pictureFolderOpen)))
 
         if(path != null && Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)){
           val children:ObservableList[TreeItem[PathItem]] = FXCollections.observableArrayList()
 
-          val dirs = Files.newDirectoryStream(path).toList//.map(stream => stream.iterator().toIterator.toList.map(path => path.getFileName))).getOrElse(List())
+
+          val dirs = Files.newDirectoryStream(path).toList
 
 
           for(dir <- dirs){
-            var child = createNode(new PathItem(dir))
+            val child = createNode(new PathItem(dir))
             if(Files.isRegularFile(dir, LinkOption.NOFOLLOW_LINKS)){
               child.setGraphic(new ImageView(pictureFile))
               children.add(child)
@@ -132,9 +145,7 @@ class RemotyAppController extends Initializable {
         }
         FXCollections.emptyObservableList()
       }
-
-
-  }
+    }
   }
 
 
@@ -142,10 +153,6 @@ class RemotyAppController extends Initializable {
   def setStage(s:Stage):Unit ={stage = s}
 
 
-
-  override def initialize(location: URL, resources: ResourceBundle): Unit = {
-   initializeAll()
-  }
 
   def initializeAll(): Unit = {
 
@@ -168,13 +175,6 @@ class RemotyAppController extends Initializable {
         }
       }
     })
-
-
-
-
-
-
-
   }
 
 
