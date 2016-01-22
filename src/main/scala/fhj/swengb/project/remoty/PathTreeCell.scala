@@ -9,6 +9,8 @@ import javafx.collections.ObservableList
 import javafx.event.{ActionEvent, EventHandler}
 import javafx.scene.control._
 import javafx.scene.input.{KeyCode, KeyEvent}
+import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
 import javafx.stage.Stage
 
 /**
@@ -117,10 +119,11 @@ class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[Pa
             }
           }
         })
-        dirMenu.getItems.addAll(deleteMenu, addMenu, expandMenu, expandAllMenu)
-        fileMenu.getItems.addAll(deleteMenu)
+
       }
     })
+    dirMenu.getItems.addAll(deleteMenu, addMenu, expandMenu, expandAllMenu)
+    fileMenu.getItems.addAll(deleteMenu)
   }
 
 
@@ -197,6 +200,8 @@ class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[Pa
       }
     })
   }
+
+
 
 
 }

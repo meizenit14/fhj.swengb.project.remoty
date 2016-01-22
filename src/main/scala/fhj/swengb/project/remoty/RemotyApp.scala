@@ -108,12 +108,23 @@ class RemotyAppController extends Initializable {
             override def call(p: TreeView[PathItem]): TreeCell[PathItem] = new PathTreeCell(stage,messageProp)
           })
           */
+
+          tree_view.setOnMouseClicked(new EventHandler[MouseEvent] {
+            override def handle(event: MouseEvent): Unit = {
+              if (event.getButton == MouseButton.SECONDARY) {
+                println("right click")
+              } else {
+                println("left click")
+              }
+            }
+          })
         }
       }
     })
 
   }
 
+  
 }
 
 
