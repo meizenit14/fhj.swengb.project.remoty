@@ -16,9 +16,9 @@ import javafx.stage.StageStyle;
   * Created by Amar on 22.01.2016.
   */
 
-class DeleteDialog {
+class DeleteDialog(owner: Stage, treeItem: TreeItem[PathItem], prop: ObjectProperty[TreeItem[PathItem]]) {
 
-    def DeleteDialog(owner: Stage, treeItem: TreeItem[PathItem], prop: ObjectProperty[TreeItem[PathItem]]) {
+
       val dialog: Stage = new Stage(StageStyle.UTILITY)
       dialog.initOwner(owner)
       dialog.initModality(Modality.APPLICATION_MODAL)
@@ -44,7 +44,7 @@ class DeleteDialog {
       root.addRow(1, okButton, cancelButton)
       dialog.setScene(new Scene(root))
       dialog.show()
-    }
+
 
 
 

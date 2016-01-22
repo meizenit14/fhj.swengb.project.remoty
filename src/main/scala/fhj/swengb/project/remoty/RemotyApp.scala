@@ -40,7 +40,7 @@ class RemotyApp extends javafx.application.Application {
   val Fxml2 = "/fhj/swengb/project/remoty/GUI_1.0.fxml"
 
 
-  val loader = new FXMLLoader(getClass.getResource(Fxml))
+  val loader = new FXMLLoader(getClass.getResource(Fxml2))
 
   override def start(stage: Stage): Unit =
     try {
@@ -81,6 +81,8 @@ class RemotyAppController extends Initializable {
   def initializeAll(): Unit = {
 
     val chooser = new DirectoryChooser
+
+    // set onClickAction on the "Choose Root Button" and open a "directory chooser" dialog
     chooserButton.setOnAction(new EventHandler[ActionEvent] {
       override def handle(event: ActionEvent): Unit = {
         val selected = chooser.showDialog(stage)
