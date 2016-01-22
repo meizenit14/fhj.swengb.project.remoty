@@ -7,6 +7,7 @@ import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file._
 import java.util.ResourceBundle
 import javafx.application.Application
+import javafx.beans.property.SimpleStringProperty
 import javafx.collections.{FXCollections, ObservableList}
 import javafx.event.{ActionEvent, EventHandler}
 import javafx.fxml.{FXML, Initializable, FXMLLoader}
@@ -49,6 +50,8 @@ class RemotyApp extends javafx.application.Application {
       val scene = new Scene(loader.getRoot[Parent]) //loads the default scene
       stage.setScene(scene)
       stage.setResizable(false) //window cannot be rescaled
+
+      //set the stage for the controller
       val controller1 = loader.getController[RemotyAppController]
       controller1.setStage(stage)
       //stage.getScene.getStylesheets.add(Css)
@@ -67,6 +70,7 @@ class RemotyAppController extends Initializable {
   @FXML var msg_out: Label = _
   @FXML var chooserButton: Button = _
   @FXML var rootLabel: Label = _
+  private var messageProp: SimpleStringProperty = new SimpleStringProperty()
 
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
@@ -94,13 +98,23 @@ class RemotyAppController extends Initializable {
           item.setExpanded(true)
           item.setGraphic(new ImageView(PathTreeItem.pictureFolder))
           tree_view.setRoot(item)
-
           tree_view.setEditable(true)
           tree_view.setCellFactory(new Callback[TreeView[PathItem],TreeCell[PathItem]]() {
             override def call(p: TreeView[PathItem]): TreeCell[PathItem] = new PathTreeCell(stage,)
           })
 
 
+
+          //set the cellfactory
+          tree_view.setCellFactory(new Callback[TreeView[PathItem]] =  {
+            val cell = new PathTreeCell(stage, messageProp)
+            return cell
+          })
+
+          /*
+          tree_view.setCellFactory(new Callback[TreeView[PathItem],TreeCell[PathItem]]() {
+            override def call(p: TreeView[PathItem]): TreeCell[PathItem] = new PathTreeCell(stage, messageProp)
+          })*/
 
         }
       }
