@@ -56,7 +56,9 @@ object PathTreeItem {
         treeItem.setGraphic(new ImageView(pictureFolderOpen))
 
         if(path != null && Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)){
-          val children:ObservableList[TreeItem[PathItem]] = FXCollections.observableArrayList()
+          val directories:ObservableList[TreeItem[PathItem]] = FXCollections.observableArrayList()
+          val files:ObservableList[TreeItem[PathItem]] = FXCollections.observableArrayList()
+          val result:ObservableList[TreeItem[PathItem]] = FXCollections.observableArrayList()
 
           //ruft die Funktion vom File "TreeViewUtil" auf und wandelt einen DirectoryStream in eine Liste um
           val dirs = TreeViewUtil.stringer(Files.newDirectoryStream(path))
@@ -67,17 +69,19 @@ object PathTreeItem {
               val child = createNode(new PathItem(dir))
               if (Files.isRegularFile(dir, LinkOption.NOFOLLOW_LINKS)) {
                 child.setGraphic(new ImageView(pictureFile))
-                children.add(child)
+                files.add(child)
               }
 
               else {
                 child.setGraphic(new ImageView(pictureFolder))
-                children.add(child)
+                directories.add(child)
               }
 
             }
           }
-          return children
+          result.addAll(directories)
+          result.addAll(files)
+          return result
         }
         FXCollections.emptyObservableList()
       }
