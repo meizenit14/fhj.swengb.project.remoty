@@ -1,7 +1,7 @@
 package fhj.swengb.project.remoty
 
 import java.io.File
-import java.nio.file.Path
+import java.nio.file.{DirectoryStream, Path}
 import javafx.scene.image.ImageView
 
 
