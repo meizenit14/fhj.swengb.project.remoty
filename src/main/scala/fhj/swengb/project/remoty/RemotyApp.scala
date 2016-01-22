@@ -121,7 +121,7 @@ class RemotyAppController extends Initializable {
         if(path != null && Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)){
           val children:ObservableList[TreeItem[PathItem]] = FXCollections.observableArrayList()
 
-          val dirs = Files.newDirectoryStream(path).toList//.map(stream => stream.iterator().toIterator.toList.map(path => path.getFileName))).getOrElse(List())
+          val dirs = Files.newDirectoryStream(path).toList
 
 
           for(dir <- dirs){
