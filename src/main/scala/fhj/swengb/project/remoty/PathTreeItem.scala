@@ -106,18 +106,18 @@ object PathTreeItem {
   /**
     * Setting the pictures for the TreeItems...
     */
-  val pictureFolderOpen: Image = new Image("/fhj/swengb/project/remoty/folder-open.png")
-  val pictureFolder: Image = new Image("/fhj/swengb/project/remoty/folder.png")
-  val pictureFile: Image = new Image("/fhj/swengb/project/remoty/file.png")
-  val picturePDFFile: Image = new Image("/fhj/swengb/project/remoty/pdf-file.png")
-  val pictureMP3File: Image = new Image("/fhj/swengb/project/remoty/mp3-file.png")
-  val pictureVideoFile: Image = new Image("/fhj/swengb/project/remoty/video-file.png")
-  val picturePictureFile: Image = new Image("/fhj/swengb/project/remoty/picture-file.png")
-  val pictureWordFile: Image = new Image("/fhj/swengb/project/remoty/word-file.png")
-  val pictureExcelFile: Image = new Image("/fhj/swengb/project/remoty/excel-file.png")
-  val picturePowerpointFile: Image = new Image("/fhj/swengb/project/remoty/powerpoint-file.png")
-  val pictureExeFile: Image = new Image("/fhj/swengb/project/remoty/exe-file.png")
-  val pictureZIPFile: Image = new Image("/fhj/swengb/project/remoty/zip-file.png")
+  lazy val pictureFolderOpen: Image = new Image("/fhj/swengb/project/remoty/folder-open.png")
+  lazy val pictureFolder: Image = new Image("/fhj/swengb/project/remoty/folder.png")
+  lazy val pictureFile: Image = new Image("/fhj/swengb/project/remoty/file.png")
+  lazy val picturePDFFile: Image = new Image("/fhj/swengb/project/remoty/pdf-file.png")
+  lazy val pictureMP3File: Image = new Image("/fhj/swengb/project/remoty/mp3-file.png")
+  lazy val pictureVideoFile: Image = new Image("/fhj/swengb/project/remoty/video-file.png")
+  lazy val picturePictureFile: Image = new Image("/fhj/swengb/project/remoty/picture-file.png")
+  lazy val pictureWordFile: Image = new Image("/fhj/swengb/project/remoty/word-file.png")
+  lazy val pictureExcelFile: Image = new Image("/fhj/swengb/project/remoty/excel-file.png")
+  lazy val picturePowerpointFile: Image = new Image("/fhj/swengb/project/remoty/powerpoint-file.png")
+  lazy val pictureExeFile: Image = new Image("/fhj/swengb/project/remoty/exe-file.png")
+  lazy val pictureZIPFile: Image = new Image("/fhj/swengb/project/remoty/zip-file.png")
 
 
 
