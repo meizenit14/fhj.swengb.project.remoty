@@ -102,11 +102,12 @@ class RemotyAppController extends Initializable {
           tree_view.setRoot(item)
           tree_view.setEditable(true)
 
-
+          //setting the cellfactory
+          /*
           tree_view.setCellFactory(new Callback[TreeView[PathItem],TreeCell[PathItem]]() {
             override def call(p: TreeView[PathItem]): TreeCell[PathItem] = new PathTreeCell(stage,messageProp)
           })
-
+          */
         }
       }
     })
