@@ -43,6 +43,11 @@ object PathTreeItem {
         isLeaf1
       }
 
+      /**
+        * creates new TreeItems and its childs if it is not a Leaf
+        * @param treeItem
+        * @return
+        */
       def buildChildren(treeItem: TreeItem[PathItem]): ObservableList[TreeItem[PathItem]] = {
         //creating root TreeItem
         val path:Path = treeItem.getValue.getPath

@@ -99,18 +99,20 @@ class RemotyAppController extends Initializable {
           item.setGraphic(new ImageView(PathTreeItem.pictureFolder))
           tree_view.setRoot(item)
           tree_view.setEditable(true)
+
+          /*
           tree_view.setCellFactory(new Callback[TreeView[PathItem],TreeCell[PathItem]]() {
             override def call(p: TreeView[PathItem]): TreeCell[PathItem] = new PathTreeCell(stage,)
           })
+*/
 
-
-
+          /**
           //set the cellfactory
           tree_view.setCellFactory(new Callback[TreeView[PathItem]] =  {
             val cell = new PathTreeCell(stage, messageProp)
             return cell
           })
-
+**/
           /*
           tree_view.setCellFactory(new Callback[TreeView[PathItem],TreeCell[PathItem]]() {
             override def call(p: TreeView[PathItem]): TreeCell[PathItem] = new PathTreeCell(stage, messageProp)

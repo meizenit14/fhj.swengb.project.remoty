@@ -1,16 +1,16 @@
 package fhj.swengb.project.remoty
 
 import javafx.event.{EventHandler, ActionEvent}
-import javafx.beans.property.ObjectProperty;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TreeItem;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.beans.property.ObjectProperty
+import javafx.geometry.Insets
+import javafx.scene.Scene
+import javafx.scene.control.Button
+import javafx.scene.control.Label
+import javafx.scene.control.TreeItem
+import javafx.scene.layout.GridPane
+import javafx.stage.Modality
+import javafx.stage.Stage
+import javafx.stage.StageStyle
 
 /**
   * Created by Amar on 22.01.2016.
@@ -26,15 +26,15 @@ class DeleteDialog(owner: Stage, treeItem: TreeItem[PathItem], prop: ObjectPrope
       root.setPadding(new Insets(30))
       root.setHgap(5)
       root.setVgap(10)
-      val label: Label = new Label("Are you sure?");
-      val okButton: Button = new Button("OK");
+      val label: Label = new Label("Are you sure?")
+      val okButton: Button = new Button("OK")
       okButton.setOnAction(new EventHandler[ActionEvent] {
         override def handle(event: ActionEvent): Unit = {
           prop.set(treeItem)
           dialog.hide()
         }
       })
-      val cancelButton: Button = new Button("Cancel");
+      val cancelButton: Button = new Button("Cancel")
       cancelButton.setOnAction(new EventHandler[ActionEvent] {
         override def handle(event: ActionEvent): Unit = {
           dialog.hide()
