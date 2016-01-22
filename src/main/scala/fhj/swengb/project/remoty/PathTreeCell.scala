@@ -198,6 +198,5 @@ class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[Pa
     })
   }
 
-
-  val dir: Path = 
+  
 }
