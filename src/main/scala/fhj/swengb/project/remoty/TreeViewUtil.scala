@@ -1,13 +1,27 @@
 package fhj.swengb.project.remoty
 
-import java.io.File
+import fhj.swengb.project.remoty.DeleteDialog
+import fhj.swengb.project.remoty.RemotyApp
 import javafx.collections.{FXCollections, ObservableList}
-import javafx.event.EventHandler
+import javafx.event.{EventHandler, ActionEvent}
 import javafx.scene.control.{TextField, TreeView, TreeCell}
 import javafx.scene.input.{KeyCode, KeyEvent}
 import javafx.util.Callback
 import scala.collection.JavaConversions
 import JavaConversions._
+import java.io.IOException;
+import java.nio.file._
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 
 /**
   * Created by Amar on 15.01.2016.
@@ -34,15 +48,25 @@ object TreeViewUtil {
 
 
   /**
+    * Helper method for the PathTreeItem in order to convert the DirectoryStream to a List
+    *
+    * @param input
+    * @tparam T
+    * @return
+    */
+  def stringer[T](input: DirectoryStream[T]): List[T] = input.toList
+
+
+  /**
     * We need to save the path we want to display (e.g. "C:\") in a List or even better in an ObservableList
     * ObservableLists are capable of listening to changes in the List (for example changing, deleting, etc..)
     */
 
 
-  def createObservableList[T](iterable: Iterable[T] = List()): ObservableList[T] = {
+  def createObservableList[T](iterable: DirectoryStream[T]): ObservableList[T] = {
     //val arrayList = new java.util.ArrayList[T]
     //arrayList.addTll(iterable)
-    FXCollections.observableList(new java.util.ArrayList[T](iterable))
+    FXCollections.observableList(new java.util.ArrayList[T](iterable.toList))
   }
 
 
@@ -57,94 +81,96 @@ object TreeViewUtil {
 
 
   /**
-    *
-    * With this method we are updating after the Callback our TreeCell so we are calling Treecells
-    *
-    * Source: https://docs.oracle.com/javase/8/javafx/api/javafx/scene/control/Cell.html
-    */
-
-  def toString[T](con: T => String)(f: TreeView[T]): TreeCell[T] = {
-    class Cell extends TreeCell[T] {
-      override protected def updateItem(t: T, empty: Boolean): Unit = {
-        super.updateItem(t, empty)
-        if (t != null) {
-          setText(con(t))
-        }
-        else setText(null)
-      }
-    }
-    new Cell
-  }
-
-
-  /**
-    * tried to make a TreeCellImplementation to rename TreeItems
+    * Class PathTreeCell which is implementing a ContextMenu to make actions with it.
+    * You have to set this up on the TreeView with the .setCellValueFactory()
     */
 
 
-    class TextFieldTreeCellImpl extends TreeCell[String] {
+  class PathTreeCell extends TreeCell[PathItem] {
 
-      override def updateItem(item: String, empty: Boolean): Unit = {
-        super.updateItem(item, empty)
-        if (empty) {
-          setText(null)
-          setGraphic(null)
+    private var textField: TextField = _
+    private var editingPath: Path = _
+    private var messageProp: StringProperty = _
+    private var dirMenu: ContextMenu = _
+    private var fileMenu: ContextMenu = _
+
+
+    def PathTreeCell(owner: Stage, messageProp: StringProperty): Unit = {
+      this.messageProp = messageProp
+
+      val expandMenu: MenuItem = new MenuItem("Expand")
+      expandMenu.setOnAction(new EventHandler[ActionEvent] {
+        override def handle(event: ActionEvent): Unit = {
+          getTreeItem.setExpanded(true)
         }
-        else {
-          if (isEditing) {
-            if (textfield != null) {
-              textfield.setText(getString())
-            }
-            setText(null)
-            setGraphic(textfield)
-          } else {
-            setText(getString())
-            setGraphic(getTreeItem.getGraphic)
-          }
+      })
+
+      val expandAllMenu: MenuItem = new MenuItem("Expand All")
+      expandAllMenu.setOnAction(new EventHandler[ActionEvent]() {
+
+        override def handle(e: ActionEvent) {
+          expandTreeItem(getTreeItem)
         }
+      })
+
       }
 
-      var textfield: TextField = _
-
-      override def startEdit(): Unit = {
-        super.startEdit()
-        if (textfield == null) {
-          createTextField()
-        }
-        setText(null)
-        setGraphic(textfield)
-        textfield.selectAll()
+    def expandTreeItem(item: TreeItem[PathItem]): Unit = item match {
+      case leaf if item.isLeaf =>
+      case noLeaf if !item.isLeaf => {
+        item.setExpanded(true)
+        val children: ObservableList[TreeItem[PathItem]] = item.getChildren
+        children.toList.filter(child => !child.isLeaf).foreach(child => expandTreeItem(child))
       }
-
-
-      override def cancelEdit() {
-        super.cancelEdit()
-        setText(getItem)
-        setGraphic(getTreeItem.getGraphic)
-      }
-
-
-
-      private def createTextField() {
-        textfield = new TextField(getString())
-        textfield.setOnKeyReleased(new EventHandler[KeyEvent]() {
-
-          override def handle(t: KeyEvent) {
-            if (t.getCode == KeyCode.ENTER) {
-              commitEdit(textfield.getText())
-            } else if (t.getCode == KeyCode.ESCAPE) {
-              cancelEdit()
-            }
-          }
-        })
-      }
-
-      private def getString(): String = {
-        if (getItem == null) "" else getItem.toString
-      }
-
 
     }
 
+
+    val addMenu: MenuItem = new MenuItem("Add Directory")
+    addMenu.setOnAction(new EventHandler[ActionEvent] {
+      override def handle(event: ActionEvent): Unit = {
+        val newDir: Path = createNewDirectory()
+        if(newDir != null) {
+          val addItem = PathTreeItem.createNode(new PathItem(newDir))
+          getTreeItem.getChildren.add(addItem)
+        }
+      }
+    })
+
+
+    def createNewDirectory(): Path = {
+      var newDir: Path = null
+      while(true) {
+        val path: Path = getTreeItem.getValue.getPath
+        newDir = Paths.get(path.toAbsolutePath.toString, "New Directory " + String.valueOf(getItem))//.getCountNewDir))
+      try {
+        Files.createDirectory(newDir)
+      }
+      catch {
+        case FileAlreadyExistsException => println("File already exists!") //maybe change the println with message pop up etc..
+        case IOException => cancelEdit(); messageProp.setValue(s"Creating directory(${newDir.getFileName}) failed")
+      }
+      }
+      return newDir
+      }
+
+
+      val deleteMenu: MenuItem = new MenuItem("Delete")
+      deleteMenu.setOnAction(new EventHandler[ActionEvent] {
+        override def handle(event: ActionEvent): Unit = {
+          val prop: ObjectProperty[TreeItem[PathItem]] = new SimpleObjectProperty[TreeItem[PathItem]]()
+          new DeleteDialog(owner,getTreeItem,prop) // <-- doesn't work with owner
+          prop.addListener(ObservableValue[TreeItem[PathItem]])
+
+          /**
+            * TO BE CONTINUED....
+            */
+        }
+      })
+
+    }
+
+
   }
+
 
