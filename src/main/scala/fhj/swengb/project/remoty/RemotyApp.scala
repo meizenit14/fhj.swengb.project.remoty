@@ -1,15 +1,15 @@
 package fhj.swengb.project.remoty
 
 
-import java.io.{IOException, File}
+import java.io.{FileNotFoundException, IOException, File}
 import java.net.URL
 import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file._
-import java.util.ResourceBundle
+import java.util.{Scanner, ResourceBundle}
 import javafx.application.Application
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.{FXCollections, ObservableList}
-import javafx.event.{ActionEvent, EventHandler}
+import javafx.event.{EventType, ActionEvent, EventHandler}
 import javafx.fxml.{FXML, Initializable, FXMLLoader}
 import javafx.scene.control._
 import javafx.scene.image.{ImageView, Image}
@@ -18,6 +18,7 @@ import javafx.scene.layout.{HBox, Pane, StackPane, BorderPane}
 import javafx.scene.{Scene, Parent}
 import javafx.stage.{DirectoryChooser, Stage}
 import javafx.util.Callback
+import scala.io.Source
 import scala.util.{Try, Success, Failure}
 import scala.util.control.NonFatal
 import scala.collection.JavaConversions._
@@ -55,6 +56,7 @@ class RemotyApp extends javafx.application.Application {
       val controller1 = loader.getController[RemotyAppController]
       controller1.setStage(stage)
       //stage.getScene.getStylesheets.add(Css)
+
       stage.show()
     } catch {
       case NonFatal(e) => e.printStackTrace()
@@ -70,6 +72,9 @@ class RemotyAppController extends Initializable {
   @FXML var msg_out: Label = _
   @FXML var chooserButton: Button = _
   @FXML var rootLabel: Label = _
+  //@FXML var textArea : TextArea = _
+
+
   //needed for the cellfactory
 
   private var messageProp: SimpleStringProperty = new SimpleStringProperty()
@@ -83,10 +88,12 @@ class RemotyAppController extends Initializable {
   var stage:Stage = null
   def setStage(s:Stage):Unit ={stage = s}
 
+//  <TextArea fx:id="textArea" layoutX="346.0" layoutY="98.0" prefHeight="535.0" prefWidth="629.0" />
 
   def initializeAll(): Unit = {
 
     val chooser = new DirectoryChooser
+
 
     // set onClickAction on the "Choose Root Button" and open a "directory chooser" dialog
     chooserButton.setOnAction(new EventHandler[ActionEvent] {
@@ -108,16 +115,64 @@ class RemotyAppController extends Initializable {
             override def call(p: TreeView[PathItem]): TreeCell[PathItem] = new PathTreeCell(stage,messageProp)
           })
           */
-
+          var index:Int = 0
           tree_view.setOnMouseClicked(new EventHandler[MouseEvent] {
             override def handle(event: MouseEvent): Unit = {
               if (event.getButton == MouseButton.SECONDARY) {
                 println("right click")
               } else {
-                println("left click")
+
+                try {
+                  //check if file is a text based file
+                  if (Files.probeContentType(tree_view.getSelectionModel.getSelectedItem.getValue.getPath).startsWith("text")) {
+
+                    if(index != 0)
+                      pane_view.getChildren.remove(index)
+
+
+                    //create new textArea to show the files content
+                    val textArea = new TextArea()
+                    textArea.setLayoutX(346.0)
+                    textArea.setLayoutY(98.0)
+                    textArea.setPrefSize(629.0,535.0)
+                    textArea.setEditable(false)
+                    pane_view.getChildren.add(textArea)
+                    index = pane_view.getChildren.indexOf(textArea)
+                    println(index)
+                    textArea.setText(Source.fromFile(tree_view.getSelectionModel.getSelectedItem.getValue.getPath.toString).getLines mkString "\n")
+                    println(pane_view.getChildren.toString)
+                  }
+
+
+                  if (Files.probeContentType(tree_view.getSelectionModel.getSelectedItem.getValue.getPath).startsWith("image")) {
+                    if(index != 0)
+                      pane_view.getChildren.remove(index)
+
+                    //create new textArea to show the files content
+                    val imageView = new ImageView()
+                    imageView.setLayoutX(346.0)
+                    imageView.setLayoutY(98.0)
+
+
+
+                    println(tree_view.getSelectionModel.getSelectedItem.getValue.getPath.toString.replace("\\", "\\\\"))
+                    imageView.setImage(new Image("file://"+tree_view.getSelectionModel.getSelectedItem.getValue.getPath.toString.replace("\\", "/")))
+                    imageView.setFitHeight(535.0)
+                    imageView.setFitWidth(629.0)
+                    pane_view.getChildren.add(imageView)
+                    index = pane_view.getChildren.indexOf(imageView)
+                    println(pane_view.getChildren.toString)
+                  }
+                }
+                catch {
+                  case e:NullPointerException => println("Filetype nicht erkannt!")
+                }
+
               }
             }
           })
+
+
         }
       }
     })
