@@ -16,15 +16,15 @@ object PathItem{
 
 class PathItem (path:Path)  {
 
-def getPath:Path= {
-      path
+  def getPath:Path= {
+    path
   }
 
   override def toString:String = {
     if(path.getFileName == null)
-       path.toString
+      path.toString
     else
-       path.getFileName.toString //show the filename, not the path in the TreeView
+      path.getFileName.toString //show the filename, not the path in the TreeView
   }
 
 }

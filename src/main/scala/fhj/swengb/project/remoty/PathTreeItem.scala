@@ -26,6 +26,7 @@ object PathTreeItem {
       var isFirstTimeLeaf = true
 
 
+
       override def getChildren: ObservableList[TreeItem[PathItem]] = {
         if(isFirstTimeChildren){
           isFirstTimeChildren = false

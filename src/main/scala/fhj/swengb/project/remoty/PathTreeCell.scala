@@ -105,7 +105,7 @@ class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[Pa
       override def handle(event: ActionEvent): Unit = {
         val prop: ObjectProperty[TreeItem[PathItem]] = new SimpleObjectProperty[TreeItem[PathItem]]()
 
-        new DeleteDialog(owner, getTreeItem, prop) // <-- doesn't work with owner
+        new DeleteDialog(owner, getTreeItem, prop)
         prop.addListener(new ChangeListener[TreeItem[PathItem]] {
           override def changed(observable: ObservableValue[_ <: TreeItem[PathItem]], oldItem: TreeItem[PathItem], newItem: TreeItem[PathItem]): Unit = {
             try {
