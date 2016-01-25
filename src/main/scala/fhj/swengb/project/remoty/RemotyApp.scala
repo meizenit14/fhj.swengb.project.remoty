@@ -22,6 +22,8 @@ import scala.io.Source
 import scala.util.{Try, Success, Failure}
 import scala.util.control.NonFatal
 import scala.collection.JavaConversions._
+import javafx.scene.media.Media
+import javafx.scene.media.MediaPlayer
 
 /**
   * Created by Amar on 19.12.2015.
@@ -122,47 +124,52 @@ class RemotyAppController extends Initializable {
                 println("right click")
               } else {
 
+                println(Files.probeContentType(tree_view.getSelectionModel.getSelectedItem.getValue.getPath))
+                val path = tree_view.getSelectionModel.getSelectedItem.getValue.getPath
                 try {
                   //check if file is a text based file
-                  if (Files.probeContentType(tree_view.getSelectionModel.getSelectedItem.getValue.getPath).startsWith("text")) {
 
-                    if(index != 0)
-                      pane_view.getChildren.remove(index)
+                  Files.probeContentType(path) match {
+                    case text if(text.startsWith("text")) => {  if(index != 0)
+                                                                  pane_view.getChildren.remove(index)
 
+                                                                //create new textArea to show the files content
+                                                                val textArea = new TextArea()
+                                                                textArea.setLayoutX(346.0)
+                                                                textArea.setLayoutY(98.0)
+                                                                textArea.setPrefSize(629.0,535.0)
+                                                                textArea.setEditable(false)
+                                                                pane_view.getChildren.add(textArea)
+                                                                index = pane_view.getChildren.indexOf(textArea)
+                                                                textArea.setText(Source.fromFile(path.toString).getLines mkString "\n")
 
-                    //create new textArea to show the files content
-                    val textArea = new TextArea()
-                    textArea.setLayoutX(346.0)
-                    textArea.setLayoutY(98.0)
-                    textArea.setPrefSize(629.0,535.0)
-                    textArea.setEditable(false)
-                    pane_view.getChildren.add(textArea)
-                    index = pane_view.getChildren.indexOf(textArea)
-                    println(index)
-                    textArea.setText(Source.fromFile(tree_view.getSelectionModel.getSelectedItem.getValue.getPath.toString).getLines mkString "\n")
-                    println(pane_view.getChildren.toString)
+                    }
+                    case image if(image.startsWith("image")) => { if(index != 0)
+                                                                    pane_view.getChildren.remove(index)
+
+                                                                  //create new imageViw to show the image
+                                                                  val imageView = new ImageView()
+                                                                  imageView.setLayoutX(346.0)
+                                                                  imageView.setLayoutY(98.0)
+
+                                                                  imageView.setImage(new Image(path.toUri.toString))
+                                                                  imageView.setFitHeight(535.0)
+                                                                  imageView.setFitWidth(629.0)
+                                                                  pane_view.getChildren.add(imageView)
+                                                                  index = pane_view.getChildren.indexOf(imageView)
+
+                    }
+                    case audio if(audio.startsWith("audio")) => { if(index != 0)
+                                                                    pane_view.getChildren.remove(index)
+
+                                                                  val song: Media = new Media(path.toUri.toString)
+                                                                  val player: MediaPlayer = new MediaPlayer(song)
+                                                                  player.play()
+                    }
+                    case _ =>
                   }
 
 
-                  if (Files.probeContentType(tree_view.getSelectionModel.getSelectedItem.getValue.getPath).startsWith("image")) {
-                    if(index != 0)
-                      pane_view.getChildren.remove(index)
-
-                    //create new textArea to show the files content
-                    val imageView = new ImageView()
-                    imageView.setLayoutX(346.0)
-                    imageView.setLayoutY(98.0)
-
-
-
-                    println(tree_view.getSelectionModel.getSelectedItem.getValue.getPath.toString.replace("\\", "\\\\"))
-                    imageView.setImage(new Image("file://"+tree_view.getSelectionModel.getSelectedItem.getValue.getPath.toString.replace("\\", "/")))
-                    imageView.setFitHeight(535.0)
-                    imageView.setFitWidth(629.0)
-                    pane_view.getChildren.add(imageView)
-                    index = pane_view.getChildren.indexOf(imageView)
-                    println(pane_view.getChildren.toString)
-                  }
                 }
                 catch {
                   case e:NullPointerException => println("Filetype nicht erkannt!")
