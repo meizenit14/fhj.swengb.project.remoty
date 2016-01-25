@@ -156,7 +156,8 @@ class RemotyAppController extends Initializable {
 
 
                     println(tree_view.getSelectionModel.getSelectedItem.getValue.getPath.toString.replace("\\", "\\\\"))
-                    imageView.setImage(new Image("file://"+tree_view.getSelectionModel.getSelectedItem.getValue.getPath.toString.replace("\\", "/")))
+                    //imageView.setImage(new Image("file://"+tree_view.getSelectionModel.getSelectedItem.getValue.getPath.toString.replace("\\", "/")))
+                    imageView.setImage(new Image(tree_view.getSelectionModel.getSelectedItem.getValue.getPath.toUri.toString))
                     imageView.setFitHeight(535.0)
                     imageView.setFitWidth(629.0)
                     pane_view.getChildren.add(imageView)
