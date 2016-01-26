@@ -47,6 +47,7 @@ object TreeViewUtil {
   }
 
 
+
   /**
     * Helper method for the PathTreeItem in order to convert the DirectoryStream to a List
     *
@@ -77,7 +78,6 @@ object TreeViewUtil {
     //arrayList.addTll(iterable)
     FXCollections.observableList(new java.util.ArrayList[T](iterable.toList))
   }
-
 
 
   }

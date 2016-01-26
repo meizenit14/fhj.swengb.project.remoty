@@ -3,6 +3,7 @@ package fhj.swengb.project.remoty
 
 import java.io.{FileNotFoundException, IOException, File}
 import java.net.URL
+import java.nio.charset.MalformedInputException
 import java.nio.file.Files._
 import java.nio.file.attribute.{BasicFileAttributeView, BasicFileAttributes}
 import java.nio.file._
@@ -20,6 +21,7 @@ import javafx.scene.layout.{HBox, Pane, StackPane, BorderPane}
 import javafx.scene.{Scene, Parent}
 import javafx.stage.{DirectoryChooser, Stage}
 import javafx.util.Callback
+import fhj.swengb.project.remoty.PathTreeCell.PathTreeCell
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.io.Source
@@ -99,7 +101,6 @@ class RemotyAppController extends Initializable {
   def initializeAll(): Unit = {
 
     val chooser = new DirectoryChooser
-
     // set onClickAction on the "Choose Root Button" and open a "directory chooser" dialog
     chooserButton.setOnAction(new EventHandler[ActionEvent] {
       override def handle(event: ActionEvent): Unit = {
@@ -113,12 +114,11 @@ class RemotyAppController extends Initializable {
           tree_view.setRoot(item)
           tree_view.setEditable(true)
 
-          //setting the cellfactory
           tree_view.setCellFactory(new Callback[TreeView[PathItem],TreeCell[PathItem]]() {
             override def call(p: TreeView[PathItem]): TreeCell[PathItem] = {
               val cell: PathTreeCell = new PathTreeCell(stage,messageProp)
-              cell
-          }
+              return cell
+            }
           })
 
 
@@ -127,7 +127,13 @@ class RemotyAppController extends Initializable {
           var players: scala.collection.mutable.MutableList[MediaPlayer] = scala.collection.mutable.MutableList()
           tree_view.setOnMouseClicked(new EventHandler[MouseEvent] {
             override def handle(event: MouseEvent): Unit = {
-              if(event.getButton == MouseButton.PRIMARY){
+
+              if (event.getButton == MouseButton.SECONDARY) {
+                println("rechts-klick")
+
+              }
+
+              else if(event.getButton == MouseButton.PRIMARY){
 
 
                 try {
@@ -210,16 +216,25 @@ class RemotyAppController extends Initializable {
                     case _ =>
                   }
 
-                  val actualFile: File = path.getFileName.toFile
+
+                  def sizeString(size: Long): String =  size match {
+                    case kilobyte if kilobyte < 1048576 => val calcSize = size / 1024 ; return s"$calcSize KB"
+                    case megabyte if megabyte >= 1048576 => val calcSize = (size / 1024) / 1024 ; return s"$calcSize MB"
+                    case gigabyte if gigabyte >= 1073741824 => val calcSize = ((size / 1024) / 1024) / 1024 ; return s"$calcSize GB"
+                    case _ => return s"$size Byte"
+                  }
+
                   val attrs = getFileAttributeView(path, classOf[BasicFileAttributeView])
+                  val actualFile: File = path.getFileName.toFile
                   val lastModified = "Last modified: " + attrs.readAttributes().lastModifiedTime().toString.take(19).replace("T", " ")
-                  val fileSize = "Filesize: " + attrs.readAttributes().size().toString + " Byte"
+                  val fileSize = "Filesize: " + sizeString(attrs.readAttributes().size)
                   val creationTime = "Creation time: " + attrs.readAttributes().creationTime().toString.take(19).replace("T", " ")
                   val data = FXCollections.observableArrayList(lastModified, fileSize, creationTime)
                   details.setItems(data)
 
                 }catch {
                   case e: NullPointerException => println("Filetype nicht erkannt!")
+                  case x: MalformedInputException => println("Unexpected error occured!")
                 }
 
               }
@@ -232,7 +247,6 @@ class RemotyAppController extends Initializable {
     })
 
   }
-
 
 }
 
