@@ -106,6 +106,7 @@ class RemotyAppController extends Initializable {
         if(selected != null){
           rootLabel.setText(selected.getAbsolutePath)
           val rootPath: String = rootLabel.getText
+
           val root = Paths.get(rootPath)
           val item = PathTreeItem.createNode(new PathItem(root))
           item.setExpanded(true)
