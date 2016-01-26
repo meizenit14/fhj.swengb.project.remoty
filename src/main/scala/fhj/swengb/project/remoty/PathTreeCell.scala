@@ -17,8 +17,8 @@ import javafx.stage.Stage
   */
 
 /**
-  * Class PathTreeCell which is implementing a ContextMenu to make actions with it.
-  * You have to set this up on the TreeView with the .setCellValueFactory()
+  * Class PathTreeCell which extends a TreeCell.
+  * It is necessary in order to be able to rename each TreeItem which is a TreeCell at the end
   */
 class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[PathItem] {
 
@@ -29,7 +29,12 @@ class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[Pa
    var fileMenu: ContextMenu = _
 
 
-
+  /**
+    * This function provides additional funtionality and implements a ContextMenu with
+    * different MenuItems which will be called at updateItem for every TreeCell
+    * @param owner
+    * @param messageProp
+    */
   def PathTreeCell(owner: Stage, messageProp: StringProperty): Unit = {
 
 
@@ -50,10 +55,6 @@ class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[Pa
 
 
 
-    /**
-      *
-      * @param item the active TreeItem
-      */
     def expandTreeItem(item: TreeItem[PathItem]): Unit = item match {
       case leaf if item.isLeaf =>
       case noLeaf if !item.isLeaf => {
@@ -141,13 +142,18 @@ class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[Pa
         setGraphic(textField)
       } else {
         setText(itemString)
-        //set the pictures
+
+        //set graphic
         graphicChooser()
 
 
         if(!getTreeItem.isLeaf){
+          //here the ContextMenu is getting called
+          //! This function provides already an eventhandler for secondary mouse button clicked
           setContextMenu(dirMenu)
         } else {
+          //here the ContextMenu is getting called
+          //! This function provides already an eventhandler for secondary mouse button clicked
           setContextMenu(fileMenu)
         }
       }
@@ -194,9 +200,12 @@ class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[Pa
   }
 
 
+  /**
+    * A function which sets the Image for every TreeCell based on the extension
+    */
   def graphicChooser():Unit = {
     if (Files.isRegularFile(getItem.getPath, LinkOption.NOFOLLOW_LINKS)) {
-      getString match {
+      getItem.toString match {
         case pdf if pdf.endsWith(".pdf") => setGraphic(new ImageView(picturePDFFile))
         case music if music.endsWith(".mp3") || music.endsWith(".aac") => setGraphic(new ImageView(pictureMP3File))
         case video if video.endsWith(".mp4") || video.endsWith(".avi") || video.endsWith(".mkv") || video.endsWith(".flv") => setGraphic(new ImageView(pictureVideoFile))
@@ -228,6 +237,7 @@ class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[Pa
   lazy val picturePowerpointFile: Image = new Image("/fhj/swengb/project/remoty/powerpoint-file.png")
   lazy val pictureExeFile: Image = new Image("/fhj/swengb/project/remoty/exe-file.png")
   lazy val pictureZIPFile: Image = new Image("/fhj/swengb/project/remoty/zip-file.png")
+
 
 
 }

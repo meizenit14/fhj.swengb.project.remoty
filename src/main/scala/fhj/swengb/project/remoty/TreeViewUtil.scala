@@ -57,6 +57,12 @@ object TreeViewUtil {
   def stringer[T](input: DirectoryStream[T]): List[T] = input.toList
 
 
+  /**
+    * Helper method to convert an ObservableList into a normal List
+    * @param input
+    * @tparam T
+    * @return
+    */
   def mkList[T](input:ObservableList[T]) :List[T] = input.toList
 
 
@@ -71,17 +77,6 @@ object TreeViewUtil {
     //arrayList.addTll(iterable)
     FXCollections.observableList(new java.util.ArrayList[T](iterable.toList))
   }
-
-
-  /**
-    * Now we can also use a ChangeListener for every ObservableValue in our ObservableList to track changes
-    * An ObservableValue wraps values and fires the changes to a ChangeListener.
-    * The ChangeListener interface receives at the end all the changes of a TreeItem, TreeView and can be used with an "addChangeListener" onto the Treeview
-    */
-
-
-  //coming soon...
-
 
 
 

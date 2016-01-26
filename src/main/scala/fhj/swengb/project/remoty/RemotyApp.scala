@@ -87,9 +87,6 @@ class RemotyAppController extends Initializable {
 
 
 
-
-
-
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     initializeAll()
   }
@@ -102,7 +99,6 @@ class RemotyAppController extends Initializable {
   def initializeAll(): Unit = {
 
     val chooser = new DirectoryChooser
-
 
     // set onClickAction on the "Choose Root Button" and open a "directory chooser" dialog
     chooserButton.setOnAction(new EventHandler[ActionEvent] {
@@ -118,7 +114,6 @@ class RemotyAppController extends Initializable {
           tree_view.setEditable(true)
 
           //setting the cellfactory
-          tree_view.setEditable(true)
           tree_view.setCellFactory(new Callback[TreeView[PathItem],TreeCell[PathItem]]() {
             override def call(p: TreeView[PathItem]): TreeCell[PathItem] = {
               val cell: PathTreeCell = new PathTreeCell(stage,messageProp)
