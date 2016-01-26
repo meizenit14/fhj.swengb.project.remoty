@@ -21,7 +21,6 @@ import javafx.scene.layout.{HBox, Pane, StackPane, BorderPane}
 import javafx.scene.{Scene, Parent}
 import javafx.stage.{DirectoryChooser, Stage}
 import javafx.util.Callback
-import fhj.swengb.project.remoty.PathTreeCell.PathTreeCell
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.io.Source
@@ -81,6 +80,8 @@ class RemotyAppController extends Initializable {
   @FXML var chooserButton: Button = _
   @FXML var rootLabel: Label = _
   @FXML var details: ListView[String] = _
+  //set a refresh button
+  @FXML var refresh_btn : Button = _
   //@FXML var textArea : TextArea = _
 
 
@@ -88,17 +89,27 @@ class RemotyAppController extends Initializable {
   lazy val messageProp: SimpleStringProperty = new SimpleStringProperty()
 
 
+  var stage:Stage = null
+  def setStage(s:Stage):Unit ={stage = s}
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     initializeAll()
   }
 
 
-  var stage:Stage = null
-  def setStage(s:Stage):Unit ={stage = s}
-
-
   def initializeAll(): Unit = {
+
+    //set a image for the refresh button
+    refresh_btn.setGraphic(new ImageView(new Image("/fhj/swengb/project/remoty/refresh.png")))
+
+    //set the action for the refresh button
+    refresh_btn.setOnAction(new EventHandler[ActionEvent] {
+      override def handle(event: ActionEvent): Unit = {
+        //rebuild the tree in order to refresh it
+        buildTree()
+        tree_view.refresh()
+      }
+    })
 
     val chooser = new DirectoryChooser
     // set onClickAction on the "Choose Root Button" and open a "directory chooser" dialog
@@ -107,13 +118,11 @@ class RemotyAppController extends Initializable {
         val selected = chooser.showDialog(stage)
         if(selected != null){
           rootLabel.setText(selected.getAbsolutePath)
-          val rootPath: String = rootLabel.getText
-          val root = Paths.get(rootPath)
-          val item = PathTreeItem.createNode(new PathItem(root))
-          item.setExpanded(true)
-          tree_view.setRoot(item)
-          tree_view.setEditable(true)
+          //call the buildTree function
+          buildTree()
 
+
+          //set the cellfactory for the tree_view in order to dynamically change things
           tree_view.setCellFactory(new Callback[TreeView[PathItem],TreeCell[PathItem]]() {
             override def call(p: TreeView[PathItem]): TreeCell[PathItem] = {
               val cell: PathTreeCell = new PathTreeCell(stage,messageProp)
@@ -217,6 +226,7 @@ class RemotyAppController extends Initializable {
                   }
 
 
+
                   def sizeString(size: Long): String =  size match {
                     case kilobyte if kilobyte < 1048576 => val calcSize = size / 1024 ; return s"$calcSize KB"
                     case megabyte if megabyte >= 1048576 => val calcSize = (size / 1024) / 1024 ; return s"$calcSize MB"
@@ -235,6 +245,7 @@ class RemotyAppController extends Initializable {
                 }catch {
                   case e: NullPointerException => println("Filetype nicht erkannt!")
                   case x: MalformedInputException => println("Unexpected error occured!")
+                  case fnf: FileNotFoundException => println("File not found! Deleted or corrupt!")
                 }
 
               }
@@ -246,6 +257,16 @@ class RemotyAppController extends Initializable {
       }
     })
 
+  }
+
+
+  def buildTree() {
+    val rootPath: String = rootLabel.getText
+    val root = Paths.get(rootPath)
+    val item = PathTreeItem.createNode(new PathItem(root))
+    item.setExpanded(true)
+    tree_view.setRoot(item)
+    tree_view.setEditable(true)
   }
 
 }

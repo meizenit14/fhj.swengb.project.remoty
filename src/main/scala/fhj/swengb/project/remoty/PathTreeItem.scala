@@ -1,7 +1,7 @@
 package fhj.swengb.project.remoty
 
 import java.io.BufferedReader
-import java.nio.file.{DirectoryStream, Path, LinkOption, Files}
+import java.nio.file._
 import java.util
 import javafx.collections.{FXCollections, ObservableList}
 import javafx.scene.control.TreeItem
@@ -11,7 +11,6 @@ import javafx.scene.image.{Image, ImageView}
   * Created by Amar on 22.01.2016.
   */
 object PathTreeItem {
-
 
   /**
     * Creating a new TreeItem and checking if it is a leaf or has got children (=no Leaf)

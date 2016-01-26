@@ -25,8 +25,8 @@ import javafx.stage.Stage
 
     var textField: TextField = _
     var editingPath: Path = _
-    val dirMenu: ContextMenu = new ContextMenu()
-    val fileMenu: ContextMenu = new ContextMenu()
+    var dirMenu: ContextMenu = _
+    var fileMenu: ContextMenu = _
 
 
     /**
@@ -122,8 +122,8 @@ import javafx.stage.Stage
       })
 
 
-      dirMenu.getItems().addAll(expandMenu, expandAllMenu, deleteMenu, addMenu)
-      fileMenu.getItems().addAll(deleteMenu)
+      dirMenu.getItems.addAll(expandMenu, expandAllMenu, deleteMenu, addMenu)
+      fileMenu.getItems.addAll(deleteMenu)
     }
 
 
