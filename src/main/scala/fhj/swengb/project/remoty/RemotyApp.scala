@@ -16,6 +16,8 @@ import javafx.scene.control._
 import javafx.scene.image.{ImageView, Image}
 import javafx.scene.input.{MouseButton, ContextMenuEvent, MouseEvent}
 import javafx.scene.layout.{HBox, Pane, StackPane, BorderPane}
+import javafx.scene.paint.Color
+import javafx.scene.shape.Rectangle
 import javafx.scene.{Scene, Parent}
 import javafx.stage.{DirectoryChooser, Stage}
 import javafx.util.Callback
@@ -111,11 +113,14 @@ class RemotyAppController extends Initializable {
           tree_view.setEditable(true)
 
           //setting the cellfactory
-
+          tree_view.setEditable(true)
           tree_view.setCellFactory(new Callback[TreeView[PathItem],TreeCell[PathItem]]() {
-            override def call(p: TreeView[PathItem]): TreeCell[PathItem] = new PathTreeCell(stage,messageProp)
+            override def call(p: TreeView[PathItem]): TreeCell[PathItem] = {
+              val cell: PathTreeCell = new PathTreeCell(stage,messageProp)
+              //setContextMenu(cell,stage)
+              return cell
+          }
           })
-
 
 
           var index:Int = 0

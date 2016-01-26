@@ -10,8 +10,6 @@ import javafx.event.{ActionEvent, EventHandler}
 import javafx.scene.control._
 import javafx.scene.image.{Image, ImageView}
 import javafx.scene.input.{KeyCode, KeyEvent}
-import javafx.scene.paint.Color
-import javafx.scene.shape.Rectangle
 import javafx.stage.Stage
 
 /**
@@ -22,17 +20,14 @@ import javafx.stage.Stage
   * Class PathTreeCell which is implementing a ContextMenu to make actions with it.
   * You have to set this up on the TreeView with the .setCellValueFactory()
   */
-object PathTreeCell{
-  def apply(owner:Stage):PathTreeCell = PathTreeCell(owner)
-}
-
 class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[PathItem] {
 
   private var textField: TextField = _
   private var editingPath: Path = _
   //private var messageProp: StringProperty = _
-  private var dirMenu: ContextMenu = _
-  private var fileMenu: ContextMenu = _
+   var dirMenu: ContextMenu = _
+   var fileMenu: ContextMenu = _
+
 
 
   def PathTreeCell(owner: Stage, messageProp: StringProperty): Unit = {
@@ -123,25 +118,27 @@ class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[Pa
 
       }
     })
-    dirMenu.getItems.addAll(deleteMenu, addMenu, expandMenu, expandAllMenu)
-    fileMenu.getItems.addAll(deleteMenu)
+    dirMenu.getItems().addAll(expandMenu, expandAllMenu, deleteMenu, addMenu)
+    fileMenu.getItems().addAll(deleteMenu)
   }
 
 
-  override def updateItem(pathItem: PathItem,empty: Boolean): Unit = {
-    super.updateItem(pathItem,empty)
+
+  override def updateItem(item: PathItem,empty: Boolean): Unit = {
+    super.updateItem(item,empty)
     if(empty){
       setText(null)
       setGraphic(null)
     } else {
+      val itemString: String = getString
       if (isEditing){
         if(textField != null) {
-          textField.setText(getString)
+          textField.setText(itemString)
         }
         setText(null)
         setGraphic(textField)
       } else {
-        setText(getString)
+        setText(itemString)
         //set the pictures
         if (Files.isRegularFile(getItem.getPath, LinkOption.NOFOLLOW_LINKS)) {
           getString match {
