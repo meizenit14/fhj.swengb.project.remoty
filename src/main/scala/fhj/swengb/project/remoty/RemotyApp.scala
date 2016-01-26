@@ -101,7 +101,7 @@ class RemotyAppController extends Initializable {
 
     /*
     //set the background for the pane_view
-    val bg = new BackgroundImage(new Image("/fhj/swengb/project/remoty/background.jpg",1500,1500,false,true),
+    val bg = new BackgroundImage(new Image("PFAD ZUM BILD",1500,1500,false,true),
       BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)
     pane_view.setBackground(new Background(bg))
     */
