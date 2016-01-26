@@ -76,12 +76,13 @@ class RemotyAppController extends Initializable {
   @FXML var msg_out: Label = _
   @FXML var chooserButton: Button = _
   @FXML var rootLabel: Label = _
-  //@FXML var textArea : TextArea = _
-
 
   //needed for the cellfactory
+  lazy val messageProp: SimpleStringProperty = new SimpleStringProperty()
 
-  private var messageProp: SimpleStringProperty = new SimpleStringProperty()
+
+
+
 
 
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
@@ -118,13 +119,14 @@ class RemotyAppController extends Initializable {
           tree_view.setCellFactory(new Callback[TreeView[PathItem],TreeCell[PathItem]]() {
             override def call(p: TreeView[PathItem]): TreeCell[PathItem] = {
               val cell: PathTreeCell = new PathTreeCell(stage,messageProp)
-              //setContextMenu(cell,stage)
-              return cell
+              cell
           }
           })
 
 
           var index:Int = 0
+
+
           tree_view.setOnMouseClicked(new EventHandler[MouseEvent] {
             override def handle(event: MouseEvent): Unit = {
               if(event.getButton == MouseButton.PRIMARY){
@@ -184,6 +186,7 @@ class RemotyAppController extends Initializable {
         }
       }
     })
+
 
   }
 

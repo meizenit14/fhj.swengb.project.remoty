@@ -118,6 +118,8 @@ class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[Pa
 
       }
     })
+
+
     dirMenu.getItems().addAll(expandMenu, expandAllMenu, deleteMenu, addMenu)
     fileMenu.getItems().addAll(deleteMenu)
   }
