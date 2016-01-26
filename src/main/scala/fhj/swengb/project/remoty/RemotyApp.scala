@@ -1,6 +1,7 @@
 package fhj.swengb.project.remoty
 
 
+import java.awt.Font
 import java.io.{FileNotFoundException, IOException, File}
 import java.net.URL
 import java.nio.file.attribute.BasicFileAttributes
@@ -24,6 +25,7 @@ import scala.util.control.NonFatal
 import scala.collection.JavaConversions._
 import javafx.scene.media.Media
 import javafx.scene.media.MediaPlayer
+import javafx.scene.text.TextAlignment
 
 /**
   * Created by Amar on 19.12.2015.
@@ -164,6 +166,34 @@ class RemotyAppController extends Initializable {
 
                                                                   val song: Media = new Media(path.toUri.toString)
                                                                   val player: MediaPlayer = new MediaPlayer(song)
+
+                                                                  val borderPane = new BorderPane()
+                                                                  borderPane.setLayoutX(346.0)
+                                                                  borderPane.setLayoutY(98.0)
+                                                                  borderPane.prefHeight(535.0)
+                                                                  borderPane.prefWidth(588.0)
+
+                                                                  val label = new Label(path.getFileName.toString)
+                                                                  label.prefHeight(92.0)
+                                                                  label.prefWidth(413.0)
+                                                                  label.setFont(new javafx.scene.text.Font("Calibri",24))
+                                                                  label.setTextAlignment(TextAlignment.CENTER)
+
+                                                                  val button = new Button("Play/Pause")
+                                                                  button.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler[MouseEvent] {
+                                                                    override def handle(event: MouseEvent) = {
+                                                                      if (player.getStatus.equals(javafx.scene.media.MediaPlayer.Status.PLAYING))
+                                                                        player.pause()
+                                                                      else
+                                                                        player.play()
+                                                                    }
+                                                                  })
+
+                                                                  borderPane.setTop(label)
+                                                                  borderPane.setCenter(button)
+                                                                  pane_view.getChildren.add(borderPane)
+                                                                  index = pane_view.getChildren.indexOf(borderPane)
+
                                                                   player.play()
                     }
                     case _ =>
