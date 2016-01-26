@@ -17,7 +17,7 @@ import javafx.geometry.{Insets, Pos}
 import javafx.scene.control._
 import javafx.scene.image.{ImageView, Image}
 import javafx.scene.input.{MouseButton, ContextMenuEvent, MouseEvent}
-import javafx.scene.layout.{HBox, Pane, StackPane, BorderPane}
+import javafx.scene.layout._
 import javafx.scene.{Scene, Parent}
 import javafx.stage.{DirectoryChooser, Stage}
 import javafx.util.Callback
@@ -98,6 +98,14 @@ class RemotyAppController extends Initializable {
 
 
   def initializeAll(): Unit = {
+
+    /*
+    //set the background for the pane_view
+    val bg = new BackgroundImage(new Image("/fhj/swengb/project/remoty/background.jpg",1500,1500,false,true),
+      BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)
+    pane_view.setBackground(new Background(bg))
+    */
+
 
     refresh_btn.setDisable(true)
     //set a image for the refresh button
