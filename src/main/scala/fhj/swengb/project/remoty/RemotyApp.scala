@@ -107,7 +107,6 @@ class RemotyAppController extends Initializable {
           val root = Paths.get(rootPath)
           val item = PathTreeItem.createNode(new PathItem(root))
           item.setExpanded(true)
-          item.setGraphic(new ImageView(PathTreeItem.pictureFolder))
           tree_view.setRoot(item)
           tree_view.setEditable(true)
 
@@ -117,18 +116,17 @@ class RemotyAppController extends Initializable {
             override def call(p: TreeView[PathItem]): TreeCell[PathItem] = new PathTreeCell(stage,messageProp)
           })
 
+
+
           var index:Int = 0
           tree_view.setOnMouseClicked(new EventHandler[MouseEvent] {
             override def handle(event: MouseEvent): Unit = {
-              if (event.getButton == MouseButton.SECONDARY) {
-                println("right click")
-              }
-
               if(event.getButton == MouseButton.PRIMARY){
 
-                println(Files.probeContentType(tree_view.getSelectionModel.getSelectedItem.getValue.getPath))
-                val path = tree_view.getSelectionModel.getSelectedItem.getValue.getPath
+
                 try {
+                  val path = tree_view.getSelectionModel.getSelectedItem.getValue.getPath
+
                   //check if file is a text based file
 
                   Files.probeContentType(path) match {
@@ -162,37 +160,8 @@ class RemotyAppController extends Initializable {
                       index = pane_view.getChildren.indexOf(imageView)
 
                     }
-                    case audio if audio.startsWith("audio") => {
-                      if (index != 0)
-                        pane_view.getChildren.remove(index)
 
-                      //media Bar wo buttons enthalten sind
-                      val mediaBar = new HBox()
-                      mediaBar.setAlignment(Pos.CENTER);
-                      mediaBar.setPadding(new Insets(5, 10, 5, 10))
-                      //setzen wo buttons (HBOX) im pane steht
-                      mediaBar.setLayoutX(380.0)
-                      mediaBar.setLayoutY(150.0)
-                      BorderPane.setAlignment(mediaBar, Pos.CENTER)
-                      val song: Media = new Media(path.toUri.toString)
-                      // Buttons für Play und pause setzen
-                      val player: MediaPlayer = new MediaPlayer(song)
-                      val pauseButton: Button = new Button("PAUSE")
-                      val playButton: Button = new Button("PLAY")
-                      //eventhandler setzen
-                      playButton.setOnMouseClicked(new EventHandler[MouseEvent] {
-                        override def handle(event: MouseEvent): Unit = player.play()})
-                      pauseButton.setOnMouseClicked(new EventHandler[MouseEvent] {
-                        override def handle(event: MouseEvent): Unit = player.pause()})
-                      mediaBar.getChildren.addAll(playButton,pauseButton)
-                      //zur pane hinzufügen
-                      pane_view.getChildren.add(mediaBar)
-                      player.play()
-                    }
-
-
-
-                    case _ => None
+                  case _ =>
                   }
 
 
