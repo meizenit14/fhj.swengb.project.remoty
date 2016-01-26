@@ -4,7 +4,8 @@ package fhj.swengb.project.remoty
 import java.awt.Font
 import java.io.{FileNotFoundException, IOException, File}
 import java.net.URL
-import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file.Files._
+import java.nio.file.attribute.{BasicFileAttributeView, BasicFileAttributes}
 import java.nio.file._
 import java.util.{Scanner, ResourceBundle}
 import javafx.application.Application
@@ -19,6 +20,8 @@ import javafx.scene.layout.{HBox, Pane, StackPane, BorderPane}
 import javafx.scene.{Scene, Parent}
 import javafx.stage.{DirectoryChooser, Stage}
 import javafx.util.Callback
+import scala.collection.JavaConverters._
+import scala.collection.mutable
 import scala.io.Source
 import scala.util.{Try, Success, Failure}
 import scala.util.control.NonFatal
@@ -76,6 +79,7 @@ class RemotyAppController extends Initializable {
   @FXML var msg_out: Label = _
   @FXML var chooserButton: Button = _
   @FXML var rootLabel: Label = _
+  @FXML var details: ListView[String] = _
   //@FXML var textArea : TextArea = _
 
 
@@ -92,7 +96,6 @@ class RemotyAppController extends Initializable {
   var stage:Stage = null
   def setStage(s:Stage):Unit ={stage = s}
 
-//  <TextArea fx:id="textArea" layoutX="346.0" layoutY="98.0" prefHeight="535.0" prefWidth="629.0" />
 
   def initializeAll(): Unit = {
 
@@ -120,89 +123,103 @@ class RemotyAppController extends Initializable {
           })
           */
           var index:Int = 0
+          var index_label:Int = 0
+          var players: scala.collection.mutable.MutableList[MediaPlayer] = scala.collection.mutable.MutableList()
           tree_view.setOnMouseClicked(new EventHandler[MouseEvent] {
             override def handle(event: MouseEvent): Unit = {
               if (event.getButton == MouseButton.SECONDARY) {
                 println("right click")
               } else {
-
-                println(Files.probeContentType(tree_view.getSelectionModel.getSelectedItem.getValue.getPath))
+                println(probeContentType(tree_view.getSelectionModel.getSelectedItem.getValue.getPath))
                 val path = tree_view.getSelectionModel.getSelectedItem.getValue.getPath
                 try {
                   //check if file is a text based file
+                  probeContentType(path) match {
+                    case text if text.startsWith("text") => {
+                      if (index != 0)
+                        pane_view.getChildren.remove(index)
 
-                  Files.probeContentType(path) match {
-                    case text if(text.startsWith("text")) => {  if(index != 0)
-                                                                  pane_view.getChildren.remove(index)
+                      //create new textArea to show the files content
+                      val textArea = new TextArea()
+                      textArea.setLayoutX(346.0)
+                      textArea.setLayoutY(98.0)
+                      textArea.setPrefSize(629.0, 535.0)
+                      textArea.setEditable(false)
+                      pane_view.getChildren.add(textArea)
+                      index = pane_view.getChildren.indexOf(textArea)
+                      textArea.setText(Source.fromFile(path.toString).getLines mkString "\n")
+                    }
+                    case image if image.startsWith("image") => {
+                      if (index != 0)
+                        pane_view.getChildren.remove(index)
 
-                                                                //create new textArea to show the files content
-                                                                val textArea = new TextArea()
-                                                                textArea.setLayoutX(346.0)
-                                                                textArea.setLayoutY(98.0)
-                                                                textArea.setPrefSize(629.0,535.0)
-                                                                textArea.setEditable(false)
-                                                                pane_view.getChildren.add(textArea)
-                                                                index = pane_view.getChildren.indexOf(textArea)
-                                                                textArea.setText(Source.fromFile(path.toString).getLines mkString "\n")
+                      //create new imageViw to show the image
+                      val imageView = new ImageView()
+                      imageView.setLayoutX(346.0)
+                      imageView.setLayoutY(98.0)
+
+                      imageView.setImage(new Image(path.toUri.toString))
+                      imageView.setFitHeight(535.0)
+                      imageView.setFitWidth(629.0)
+                      pane_view.getChildren.add(imageView)
+                      index = pane_view.getChildren.indexOf(imageView)
 
                     }
-                    case image if(image.startsWith("image")) => { if(index != 0)
-                                                                    pane_view.getChildren.remove(index)
+                    case audio if audio.startsWith("audio") => {
+                      if (index != 0)
+                        pane_view.getChildren.remove(index)
+                      if (players.nonEmpty) {
+                        players.reverse.head.stop()
+                        players = scala.collection.mutable.MutableList()
+                        pane_view.getChildren.remove(index_label)
+                      }
 
-                                                                  //create new imageViw to show the image
-                                                                  val imageView = new ImageView()
-                                                                  imageView.setLayoutX(346.0)
-                                                                  imageView.setLayoutY(98.0)
+                      val song: Media = new Media(path.toUri.toString)
+                      val player: MediaPlayer = new MediaPlayer(song)
+                      players += player
+                      println(players)
 
-                                                                  imageView.setImage(new Image(path.toUri.toString))
-                                                                  imageView.setFitHeight(535.0)
-                                                                  imageView.setFitWidth(629.0)
-                                                                  pane_view.getChildren.add(imageView)
-                                                                  index = pane_view.getChildren.indexOf(imageView)
+                      val label = new Label(path.getFileName.toString)
+                      label.setLayoutX(900.0)
+                      label.setLayoutY(14.0)
+                      label.prefHeight(42.0)
+                      label.prefWidth(500.0)
+                      label.setFont(new javafx.scene.text.Font("Calibri", 12))
+                      label.setTextAlignment(TextAlignment.LEFT)
 
-                    }
-                    case audio if(audio.startsWith("audio")) => { if(index != 0)
-                                                                    pane_view.getChildren.remove(index)
+                      val button = new Button("Play/Pause")
+                      button.setLayoutX(1100.0)
+                      button.setLayoutY(40.0)
+                      button.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler[MouseEvent] {
+                        override def handle(event: MouseEvent) = {
+                          println(players)
+                          val player: MediaPlayer = players.reverse.head
+                          if (player.getStatus.equals(javafx.scene.media.MediaPlayer.Status.PLAYING))
+                            player.pause()
+                          else
+                            player.play()
+                        }
+                      })
 
-                                                                  val song: Media = new Media(path.toUri.toString)
-                                                                  val player: MediaPlayer = new MediaPlayer(song)
+                      pane_view.getChildren.add(label)
+                      index_label = pane_view.getChildren.indexOf(label)
+                      pane_view.getChildren.add(button)
 
-                                                                  val borderPane = new BorderPane()
-                                                                  borderPane.setLayoutX(346.0)
-                                                                  borderPane.setLayoutY(98.0)
-                                                                  borderPane.prefHeight(535.0)
-                                                                  borderPane.prefWidth(588.0)
-
-                                                                  val label = new Label(path.getFileName.toString)
-                                                                  label.prefHeight(92.0)
-                                                                  label.prefWidth(413.0)
-                                                                  label.setFont(new javafx.scene.text.Font("Calibri",24))
-                                                                  label.setTextAlignment(TextAlignment.CENTER)
-
-                                                                  val button = new Button("Play/Pause")
-                                                                  button.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler[MouseEvent] {
-                                                                    override def handle(event: MouseEvent) = {
-                                                                      if (player.getStatus.equals(javafx.scene.media.MediaPlayer.Status.PLAYING))
-                                                                        player.pause()
-                                                                      else
-                                                                        player.play()
-                                                                    }
-                                                                  })
-
-                                                                  borderPane.setTop(label)
-                                                                  borderPane.setCenter(button)
-                                                                  pane_view.getChildren.add(borderPane)
-                                                                  index = pane_view.getChildren.indexOf(borderPane)
-
-                                                                  player.play()
+                      players.reverse.head.play()
                     }
                     case _ =>
                   }
 
+                  val actualFile: File = path.getFileName.toFile
+                  val attrs = getFileAttributeView(path, classOf[BasicFileAttributeView])
+                  val lastModified = "Last modified: " + attrs.readAttributes().lastModifiedTime().toString.take(19).replace("T", " ")
+                  val fileSize = "Filesize: " + attrs.readAttributes().size().toString + " Byte"
+                  val creationTime = "Creation time: " + attrs.readAttributes().creationTime().toString.take(19).replace("T", " ")
+                  val data = FXCollections.observableArrayList(lastModified, fileSize, creationTime)
+                  details.setItems(data)
 
-                }
-                catch {
-                  case e:NullPointerException => println("Filetype nicht erkannt!")
+                }catch {
+                  case e: NullPointerException => println("Filetype nicht erkannt!")
                 }
 
               }
@@ -216,7 +233,7 @@ class RemotyAppController extends Initializable {
 
   }
 
-  
+
 }
 
 
