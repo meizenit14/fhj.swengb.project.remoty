@@ -1,6 +1,6 @@
 package fhj.swengb.project.remoty
 
-import java.io.IOException
+import java.io.{File, IOException}
 import java.nio.file._
 import java.util.function.Predicate
 import javafx.beans.property.{SimpleObjectProperty, ObjectProperty, StringProperty}
@@ -143,23 +143,8 @@ class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[Pa
       } else {
         setText(getString)
         //set the pictures
-        if (Files.isRegularFile(getItem.getPath, LinkOption.NOFOLLOW_LINKS)) {
-          getString match {
-            case pdf if pdf.endsWith(".pdf") => setGraphic(new ImageView(picturePDFFile))
-            case music if music.endsWith(".mp3") || music.endsWith(".aac") => setGraphic(new ImageView(pictureMP3File))
-            case video if video.endsWith(".mp4") || video.endsWith(".avi") || video.endsWith(".mkv") || video.endsWith(".flv") => setGraphic(new ImageView(pictureVideoFile))
-            case picture if picture.endsWith(".jpg") || picture.endsWith(".JPG") || picture.endsWith(".jpeg") || picture.endsWith(".png") || picture.endsWith(".PNG") || picture.endsWith(".gif") || picture.endsWith(".ico") || picture.endsWith(".bmp") => setGraphic(new ImageView(picturePictureFile))
-            case word if word.endsWith(".doc") || word.endsWith(".docx") || word.endsWith(".odt") || word.endsWith(".pages") => setGraphic(new ImageView(pictureWordFile))
-            case excel if excel.endsWith(".xls") || excel.endsWith(".xlsx") || excel.endsWith(".numbers") => setGraphic(new ImageView(pictureExcelFile))
-            case powerpoint if powerpoint.endsWith(".ppt") || powerpoint.endsWith(".pptx") || powerpoint.endsWith(".key") => setGraphic(new ImageView(picturePowerpointFile))
-            case exe if exe.endsWith(".exe") || exe.endsWith(".EXE") || exe.endsWith(".msi") || exe.endsWith(".pkg") => setGraphic(new ImageView(pictureExeFile))
-            case zip if zip.endsWith(".zip") || zip.endsWith(".7z") || zip.endsWith(".rar") || zip.endsWith(".tar") || zip.endsWith(".gz") => setGraphic(new ImageView(pictureZIPFile))
-            case _ => setGraphic(new ImageView(pictureFile))
-          }
-        }
-        else{
-          setGraphic(new ImageView(pictureFolder))
-        }
+        graphicChooser()
+
 
         if(!getTreeItem.isLeaf){
           setContextMenu(dirMenu)
@@ -184,24 +169,12 @@ class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[Pa
   }
 
 
-  override def commitEdit(pathItem: PathItem): Unit = {
-    //rename dir or file
-    if(editingPath != null){
-      try{
-        Files.move(editingPath,pathItem.getPath)
-      }
-      catch{
-        case a: IOException => cancelEdit() ; messageProp.setValue(s"Renaming ${editingPath.getFileName} failed")
-      }
-    }
-    super.commitEdit(pathItem)
-  }
-
-
   override def cancelEdit(): Unit = {
     super.cancelEdit()
     setText(getString)
-    setGraphic(null)
+
+    //set graphic
+    graphicChooser()
   }
 
   private def getString: String = getItem.toString
@@ -213,6 +186,7 @@ class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[Pa
         if(event.getCode == KeyCode.ENTER) {
           val path: Path = Paths.get(getItem.getPath.getParent.toAbsolutePath.toString, textField.getText)
           commitEdit(new PathItem(path))
+          Files.move(editingPath,path)
         } else if (event.getCode == KeyCode.ESCAPE) {
           cancelEdit()
         }
@@ -220,6 +194,26 @@ class PathTreeCell(owner: Stage, messageProp:StringProperty) extends TreeCell[Pa
     })
   }
 
+
+  def graphicChooser():Unit = {
+    if (Files.isRegularFile(getItem.getPath, LinkOption.NOFOLLOW_LINKS)) {
+      getString match {
+        case pdf if pdf.endsWith(".pdf") => setGraphic(new ImageView(picturePDFFile))
+        case music if music.endsWith(".mp3") || music.endsWith(".aac") => setGraphic(new ImageView(pictureMP3File))
+        case video if video.endsWith(".mp4") || video.endsWith(".avi") || video.endsWith(".mkv") || video.endsWith(".flv") => setGraphic(new ImageView(pictureVideoFile))
+        case picture if picture.endsWith(".jpg") || picture.endsWith(".JPG") || picture.endsWith(".jpeg") || picture.endsWith(".png") || picture.endsWith(".PNG") || picture.endsWith(".gif") || picture.endsWith(".ico") || picture.endsWith(".bmp") => setGraphic(new ImageView(picturePictureFile))
+        case word if word.endsWith(".doc") || word.endsWith(".docx") || word.endsWith(".odt") || word.endsWith(".pages") => setGraphic(new ImageView(pictureWordFile))
+        case excel if excel.endsWith(".xls") || excel.endsWith(".xlsx") || excel.endsWith(".numbers") => setGraphic(new ImageView(pictureExcelFile))
+        case powerpoint if powerpoint.endsWith(".ppt") || powerpoint.endsWith(".pptx") || powerpoint.endsWith(".key") => setGraphic(new ImageView(picturePowerpointFile))
+        case exe if exe.endsWith(".exe") || exe.endsWith(".EXE") || exe.endsWith(".msi") || exe.endsWith(".pkg") => setGraphic(new ImageView(pictureExeFile))
+        case zip if zip.endsWith(".zip") || zip.endsWith(".7z") || zip.endsWith(".rar") || zip.endsWith(".tar") || zip.endsWith(".gz") => setGraphic(new ImageView(pictureZIPFile))
+        case _ => setGraphic(new ImageView(pictureFile))
+      }
+    }
+    else{
+      setGraphic(new ImageView(pictureFolder))
+    }
+  }
   /**
     * Setting the pictures for the TreeItems...
     */

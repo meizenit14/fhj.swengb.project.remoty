@@ -14,7 +14,7 @@ object PathItem{
   def apply(path:Path):PathItem = PathItem(path)
 }
 
-class PathItem (path:Path)  {
+class PathItem (path:Path)   {
 
   def getPath:Path= {
     path
