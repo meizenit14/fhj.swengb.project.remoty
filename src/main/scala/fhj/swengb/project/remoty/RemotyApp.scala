@@ -99,6 +99,7 @@ class RemotyAppController extends Initializable {
 
   def initializeAll(): Unit = {
 
+    refresh_btn.setDisable(true)
     //set a image for the refresh button
     refresh_btn.setGraphic(new ImageView(new Image("/fhj/swengb/project/remoty/refresh.png")))
 
@@ -120,7 +121,7 @@ class RemotyAppController extends Initializable {
           rootLabel.setText(selected.getAbsolutePath)
           //call the buildTree function
           buildTree()
-
+          refresh_btn.setDisable(false)
 
           //set the cellfactory for the tree_view in order to dynamically change things
           tree_view.setCellFactory(new Callback[TreeView[PathItem],TreeCell[PathItem]]() {
