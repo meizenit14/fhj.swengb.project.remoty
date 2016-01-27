@@ -271,15 +271,11 @@ class RemotyAppController extends Initializable {
 
                 }catch {
                   case e: NullPointerException => {
-                    if (index != 0){
+                    if (index != 0) {
                       pane_view.getChildren.remove(index)
                       index = 0
                     }
-                    val attrs = getFileAttributeView(tree_view.getSelectionModel.getSelectedItem.getValue.getPath, classOf[BasicFileAttributeView])
-                    val lastModified = "Last modified: " + attrs.readAttributes().lastModifiedTime().toString.take(19).replace("T", " ")
-                    val creationTime = "Creation time: " + attrs.readAttributes().creationTime().toString.take(19).replace("T", " ")
-                    val data = FXCollections.observableArrayList(lastModified, creationTime)
-                    details.setItems(data)}
+                  }
                   case x: MalformedInputException => println("Unexpected error occured!")
                   case fnf: FileNotFoundException => println("File not found! Deleted or corrupt!")
                 }
@@ -294,7 +290,6 @@ class RemotyAppController extends Initializable {
     })
 
   }
-
 
   def buildTree() {
     val rootPath: String = rootLabel.getText
