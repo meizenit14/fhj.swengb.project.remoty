@@ -12,25 +12,25 @@ The members of the developer team are:
 ##Documentation
 
 ###Functions
-•) TreeView
-•) Root can be set with a DirectoryChooser
-•) Icons are set for the most important file-types in the TreeCell
-•) Refresh button which refreshes the whole content of the TreeView
-•) Show attributes of files (Last modified, size, creation time)
-•) TextView for plain text files
-•) ImageView for all common image file-types
-•) ContextMenu for a directory:
-    ○) Expand
-    ○) Expand All
-    ○) Rename
-    ○) Add directory
-    ○) Delete
-•) ContextMenu for files:
-    ○) Open (with the default programme set)
-    ○) Rename
-    ○) Delete
-•) Drag & Drop for moving files
-•) Music player for music files
+* TreeView
+* Root can be set with a DirectoryChooser
+* Icons are set for the most important file-types in the TreeCell
+* Refresh button which refreshes the whole content of the TreeView
+* Show attributes of files (Last modified, size, creation time)
+* TextView for plain text files
+* ImageView for all common image file-types
+* ContextMenu for a directory:
+    - Expand
+    - Expand All
+    - Rename
+    - Add directory
+    - Delete
+* ContextMenu for files:
+    - Open (with the default programme set)
+    - Rename
+    - Delete
+* Drag & Drop for moving files
+* Music player for music files
 
 
 ###Development
