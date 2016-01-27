@@ -5,3 +5,6 @@ The members of the developer team are:
 - Bajric Amar
 - Meizenitsch Georg
 - Lagger Christian
+
+
+![Screenshot]("fhj/swengb/project/remoty/filebroweser.png")

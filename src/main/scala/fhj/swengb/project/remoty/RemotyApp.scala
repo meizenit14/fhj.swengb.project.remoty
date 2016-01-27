@@ -24,7 +24,7 @@ import javafx.stage.{StageStyle, DirectoryChooser, Stage}
 import javafx.util.Callback
 import scala.collection.JavaConverters._
 import scala.collection.mutable
-import scala.io.Source
+import scala.io.{BufferedSource, Source}
 import scala.util.{Try, Success, Failure}
 import scala.util.control.NonFatal
 import scala.collection.JavaConversions._
@@ -169,7 +169,7 @@ class RemotyAppController extends Initializable {
                       pane_view.getChildren.add(textArea)
                       index = pane_view.getChildren.indexOf(textArea)
                       //get the text from file and set it to the text area, then close the stream to prevent "file already in use" errors
-                      val text = Source.fromFile(path.toString)
+                      val text: BufferedSource = Source.fromFile(path.toString)
                       textArea.setText(text.getLines() mkString "\n")
                       text.close()
                     }
@@ -276,7 +276,7 @@ class RemotyAppController extends Initializable {
                       index = 0
                     }
                   }
-                  case x: MalformedInputException => println("Unexpected error occured!")
+                  case x: MalformedInputException => println("Unexpected error occured! Can't display special characters (e.g. ö)")
                   case fnf: FileNotFoundException => println("File not found! Deleted or corrupt!")
                 }
 
