@@ -18,8 +18,9 @@ import javafx.scene.control._
 import javafx.scene.image.{ImageView, Image}
 import javafx.scene.input.{MouseButton, ContextMenuEvent, MouseEvent}
 import javafx.scene.layout._
+import javafx.scene.paint.Color
 import javafx.scene.{Scene, Parent}
-import javafx.stage.{DirectoryChooser, Stage}
+import javafx.stage.{StageStyle, DirectoryChooser, Stage}
 import javafx.util.Callback
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -54,6 +55,8 @@ class RemotyApp extends javafx.application.Application {
   override def start(stage: Stage): Unit =
     try {
       stage.setTitle("Remoty")
+      //set Icon for JavaFX App
+      stage.getIcons().add(new Image("/fhj/swengb/project/remoty/filebrowser-logo.png"))
       loader.load[Parent]() // side effect
       val scene = new Scene(loader.getRoot[Parent]) //loads the default scene
       stage.setScene(scene)
@@ -99,13 +102,6 @@ class RemotyAppController extends Initializable {
 
 
   def initializeAll(): Unit = {
-
-    /*
-    //set the background for the pane_view
-    val bg = new BackgroundImage(new Image("PFAD ZUM BILD",1500,1500,false,true),
-      BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)
-    pane_view.setBackground(new Background(bg))
-    */
 
 
     refresh_btn.setDisable(true)
