@@ -162,9 +162,9 @@ class RemotyAppController extends Initializable {
 
                   Files.probeContentType(path) match {
                     case text if text.startsWith("text") => {
-                      if (index != 0)
+                      if (index != 0) {
                         pane_view.getChildren.remove(index)
-
+                      }
                       //create new textArea to show the files content
                       val textArea = new TextArea()
                       textArea.setLayoutX(346.0)
@@ -173,7 +173,10 @@ class RemotyAppController extends Initializable {
                       textArea.setEditable(false)
                       pane_view.getChildren.add(textArea)
                       index = pane_view.getChildren.indexOf(textArea)
-                      textArea.setText(Source.fromFile(path.toString).getLines mkString "\n")
+                      //get the text from file and set it to the text area, then close the stream to prevent "file already in use" errors
+                      val text = Source.fromFile(path.toString)
+                      textArea.setText(text.getLines() mkString "\n")
+                      text.close()
                     }
                     case image if image.startsWith("image") => {
                       if (index != 0)
@@ -202,12 +205,12 @@ class RemotyAppController extends Initializable {
                       pane.setLayoutY(346.0)
                       pane.setPrefSize(629.0, 535.0)
 
-                      val songname: Label = new Label(path.getFileName.toString)
-                      songname.setFont(new javafx.scene.text.Font("Calibri",24))
-                      songname.setTextAlignment(TextAlignment.CENTER)
+                      val songName: Label = new Label(path.getFileName.toString)
+                      songName.setFont(new javafx.scene.text.Font("Calibri",24))
+                      songName.setTextAlignment(TextAlignment.CENTER)
 
-                      val startbutton: Button = new Button()
-                      startbutton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler[MouseEvent] {
+                      val startButton: Button = new Button()
+                      startButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler[MouseEvent] {
                         override def handle(event: MouseEvent) = {
 
                           if (index != 0){
@@ -238,11 +241,11 @@ class RemotyAppController extends Initializable {
                           ppButton.setVisible(true)
                           players.head.play()
                         }
-                        startbutton.setGraphic(new ImageView(new Image("/fhj/swengb/project/remoty/play.png")))
-                        startbutton.setLayoutX(100.0)
-                        startbutton.setLayoutY(50.0)
-                        pane.getChildren.add(songname)
-                        pane.getChildren.add(startbutton)
+                        startButton.setGraphic(new ImageView(new Image("/fhj/swengb/project/remoty/play.png")))
+                        startButton.setLayoutX(100.0)
+                        startButton.setLayoutY(50.0)
+                        pane.getChildren.add(songName)
+                        pane.getChildren.add(startButton)
                         pane_view.getChildren.add(pane)
                         index = pane_view.getChildren.indexOf(pane)
                       })
