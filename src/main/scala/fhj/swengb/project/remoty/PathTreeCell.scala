@@ -161,7 +161,6 @@ import javafx.stage.Stage
             try {
               Files.delete(newItem.getValue.getPath)
 
-
               if (getTreeItem.getParent == null) {}
               else getTreeItem.getParent.getChildren.remove(newItem)
             }
@@ -272,6 +271,8 @@ import javafx.stage.Stage
         }
       })
     }
+
+
 
 
     /**

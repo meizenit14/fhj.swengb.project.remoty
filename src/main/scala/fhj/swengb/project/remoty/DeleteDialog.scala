@@ -40,7 +40,7 @@ class DeleteDialog(owner: Stage, treeItem: TreeItem[PathItem], prop: ObjectPrope
         override def handle(event: ActionEvent): Unit = {
           dialog.hide()
         }
-      });
+      })
       root.add(label, 0, 0, 2, 1)
       root.addRow(1, okButton, cancelButton)
       dialog.setScene(new Scene(root))

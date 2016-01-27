@@ -157,11 +157,11 @@ class RemotyAppController extends Initializable {
                 try {
                   val path = tree_view.getSelectionModel.getSelectedItem.getValue.getPath
 
-                  //check if file is a text based file
-
+                  //check if file is a text, image or audio based file
                   Files.probeContentType(path) match {
-                    case text if text.startsWith("text") => {  if(index != 0)
-                      pane_view.getChildren.remove(index)
+                    case text if text.startsWith("text") => {
+                      if (index != 0)
+                        pane_view.getChildren.remove(index)
 
                       //create new textArea to show the files content
                       val textArea = new TextArea()
@@ -171,7 +171,12 @@ class RemotyAppController extends Initializable {
                       textArea.setEditable(false)
                       pane_view.getChildren.add(textArea)
                       index = pane_view.getChildren.indexOf(textArea)
-                      textArea.setText(Source.fromFile(path.toString).getLines mkString "\n")
+
+                      //get the text from file and set it to the text area, then close the stream to prevent "file already in use" errors
+                      val text = Source.fromFile(path.toString)
+                      textArea.setText(text.getLines() mkString "\n")
+                      text.close()
+
                     }
                     case image if image.startsWith("image") => {
                       if (index != 0)
