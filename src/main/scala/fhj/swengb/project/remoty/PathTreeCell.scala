@@ -61,6 +61,23 @@ import javafx.stage.Stage
 
       }
 
+
+      val renameDirMenu: MenuItem = new MenuItem("Rename")
+      renameDirMenu.setOnAction(new EventHandler[ActionEvent] {
+        override def handle(event: ActionEvent): Unit = {
+          getTreeView.edit(getTreeItem)
+        }
+      })
+
+
+      val renameFileMenu: MenuItem = new MenuItem("Rename")
+      renameFileMenu.setOnAction(new EventHandler[ActionEvent] {
+        override def handle(event: ActionEvent): Unit = {
+          getTreeView.edit(getTreeItem)
+        }
+      })
+
+
       // add a directory
       val addMenu: MenuItem = new MenuItem("Add Directory")
       addMenu.setOnAction(new EventHandler[ActionEvent] {
@@ -77,7 +94,7 @@ import javafx.stage.Stage
       def createNewDirectory(): Path = {
 
           val path: Path = getTreeItem.getValue.getPath
-          val newDir = Paths.get(path.toAbsolutePath.toString, "New Directory " + String.valueOf(getItem))
+          val newDir = Paths.get(path.toAbsolutePath.toString, "New Directory " + getItem.toString)
           try {
             Files.createDirectory(newDir)
           }
@@ -148,8 +165,8 @@ import javafx.stage.Stage
     })
 
 
-      dirMenu.getItems.addAll(expandMenu, expandAllMenu, addMenu, deleteMenuDir)
-      fileMenu.getItems.addAll(deleteMenuFile)
+      dirMenu.getItems.addAll(expandMenu, expandAllMenu,renameDirMenu, addMenu, deleteMenuDir)
+      fileMenu.getItems.addAll(renameFileMenu,deleteMenuFile)
 
 
 

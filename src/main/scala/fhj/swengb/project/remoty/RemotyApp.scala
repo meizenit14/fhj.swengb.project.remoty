@@ -152,13 +152,7 @@ class RemotyAppController extends Initializable {
           tree_view.setOnMouseClicked(new EventHandler[MouseEvent] {
             override def handle(event: MouseEvent): Unit = {
 
-              if (event.getButton == MouseButton.SECONDARY) {
-                println("rechts-klick")
-
-              }
-
-              else if(event.getButton == MouseButton.PRIMARY){
-
+              if(event.getButton == MouseButton.PRIMARY){
 
                 try {
                   val path = tree_view.getSelectionModel.getSelectedItem.getValue.getPath
@@ -243,10 +237,10 @@ class RemotyAppController extends Initializable {
 
 
                   def sizeString(size: Long): String =  size match {
-                    case kilobyte if kilobyte < 1048576 => val calcSize = size / 1024 ; return s"$calcSize KB"
-                    case megabyte if megabyte >= 1048576 => val calcSize = (size / 1024) / 1024 ; return s"$calcSize MB"
-                    case gigabyte if gigabyte >= 1073741824 => val calcSize = ((size / 1024) / 1024) / 1024 ; return s"$calcSize GB"
-                    case _ => return s"$size Byte"
+                    case kilobyte if kilobyte < 1048576 => val calcSize = size / 1024 ; s"$calcSize KB"
+                    case megabyte if megabyte >= 1048576 => val calcSize = (size / 1024) / 1024 ; s"$calcSize MB"
+                    case gigabyte if gigabyte >= 1073741824 => val calcSize = ((size / 1024) / 1024) / 1024 ; s"$calcSize GB"
+                    case _ => s"$size Byte"
                   }
 
                   val attrs = getFileAttributeView(path, classOf[BasicFileAttributeView])
@@ -258,7 +252,7 @@ class RemotyAppController extends Initializable {
                   details.setItems(data)
 
                 }catch {
-                  case e: NullPointerException => println("Filetype nicht erkannt!")
+                  case e: NullPointerException => println("Unknown type!")
                   case x: MalformedInputException => println("Unexpected error occured!")
                   case fnf: FileNotFoundException => println("File not found! Deleted or corrupt!")
                 }
