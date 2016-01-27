@@ -34,8 +34,7 @@ The members of the developer team are:
 
 
 ###Development
-We first tried to figure out how to use a simple TreeView in order learn more about the TreeView in JavaFX.
-In the next step we tried to figure out how to use the java.nio.File library and to create a TreeView which shows the content of our System drive.
-In the last few steps we started to implement features like Deleting, Adding Directories, Renaming TreeItems. This can be done easily thanks to the implemented
-functions of the java.nio.File library and the TreeCell functions.
-At the end we also implemented minor features like images for the TreeCells and also a TextView for simple text files or an ImageView for image files.
+- We first tried to figure out how to use a simple TreeView in order learn more about the TreeView in JavaFX.
+- In the next step we tried to figure out how to use the java.nio.File library and to create a TreeView which shows the content of our System drive.
+- In the last few steps we started to implement features like Deleting, Adding Directories, Renaming TreeItems. This can be done easily thanks to the implemented functions of the java.nio.File library and the TreeCell functions.
+- At the end we also implemented minor features like images for the TreeCells and also a TextView for simple text files or an ImageView for image files.
