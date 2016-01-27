@@ -221,7 +221,6 @@ class RemotyAppController extends Initializable {
                           val song: Media = new Media(path.toUri.toString)
                           val player: MediaPlayer = new MediaPlayer(song)
                           players += player
-                          println(players)
 
                           Songlabel.setText(path.getFileName.toString)
                           Songlabel.setVisible(true)
