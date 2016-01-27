@@ -169,7 +169,8 @@ class RemotyAppController extends Initializable {
                       pane_view.getChildren.add(textArea)
                       index = pane_view.getChildren.indexOf(textArea)
                       //get the text from file and set it to the text area, then close the stream to prevent "file already in use" errors
-                      val text: BufferedSource = Source.fromFile(path.toString)
+                      //here we have to use another encoding for the special characters
+                      val text: BufferedSource = Source.fromFile(path.toString,"ISO-8859-1")
                       textArea.setText(text.getLines() mkString "\n")
                       text.close()
                     }
@@ -276,7 +277,7 @@ class RemotyAppController extends Initializable {
                       index = 0
                     }
                   }
-                  case x: MalformedInputException => println("Unexpected error occured! Can't display special characters (e.g. ö)")
+                  case x: MalformedInputException => println("Unexpected error occured!")
                   case fnf: FileNotFoundException => println("File not found! Deleted or corrupt!")
                 }
 
