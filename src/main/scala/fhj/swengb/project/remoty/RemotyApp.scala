@@ -38,6 +38,7 @@ import javafx.scene.text.TextAlignment
 object RemotyApp {
   def main(args: Array[String]) {
     Application.launch(classOf[RemotyApp], args: _*)
+
   }
 }
 
@@ -99,6 +100,7 @@ class RemotyAppController extends Initializable {
 
   def initializeAll(): Unit = {
 
+
     /*
     //set the background for the pane_view
     val bg = new BackgroundImage(new Image("PFAD ZUM BILD",1500,1500,false,true),
@@ -141,7 +143,7 @@ class RemotyAppController extends Initializable {
           tree_view.setCellFactory(new Callback[TreeView[PathItem],TreeCell[PathItem]]() {
             override def call(p: TreeView[PathItem]): TreeCell[PathItem] = {
               val cell: PathTreeCell = new PathTreeCell(stage,messageProp)
-              return cell
+               cell
             }
           })
 
