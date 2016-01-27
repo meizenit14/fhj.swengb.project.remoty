@@ -1,5 +1,6 @@
 package fhj.swengb.project.remoty
 
+import java.awt.Desktop
 import java.io.{File, IOException}
 import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
@@ -31,6 +32,7 @@ import javafx.stage.Stage
 
 
 
+      //expanding a directory and only the next nested level of the directory
       val expandMenu: MenuItem = new MenuItem("Expand")
       expandMenu.setOnAction(new EventHandler[ActionEvent] {
         override def handle(event: ActionEvent): Unit = {
@@ -50,6 +52,7 @@ import javafx.stage.Stage
 
     /**
       * A recursive function which is expanding all Items which are nested under the clicked Item.
+ *
       * @param item
       */
     def expandTreeItem(item: TreeItem[PathItem]): Unit = item match {
@@ -64,7 +67,7 @@ import javafx.stage.Stage
 
       }
 
-
+      //renaming the Directory
       val renameDirMenu: MenuItem = new MenuItem("Rename")
       renameDirMenu.setOnAction(new EventHandler[ActionEvent] {
         override def handle(event: ActionEvent): Unit = {
@@ -72,11 +75,20 @@ import javafx.stage.Stage
         }
       })
 
-
+      //renaming the file
       val renameFileMenu: MenuItem = new MenuItem("Rename")
       renameFileMenu.setOnAction(new EventHandler[ActionEvent] {
         override def handle(event: ActionEvent): Unit = {
           getTreeView.edit(getTreeItem)
+        }
+      })
+
+      //opens all Files with the default programme
+      val openMenu: MenuItem = new MenuItem("Open")
+      openMenu.setOnAction(new EventHandler[ActionEvent] {
+        override def handle(event: ActionEvent): Unit = {
+          //from java.awt --> get the default programme to open the specific File
+          Desktop.getDesktop.open(getItem.getPath.toFile)
         }
       })
 
@@ -97,6 +109,7 @@ import javafx.stage.Stage
     /**
       * Creating a new Directory with the current path where clicked and the name of the parent Item
       * Is being used in the MenuItem
+ *
       * @return
       */
     def createNewDirectory(): Path = {
@@ -177,7 +190,7 @@ import javafx.stage.Stage
 
       //add all the MenuItems created to the two ContextMenus
       dirMenu.getItems.addAll(expandMenu, expandAllMenu,renameDirMenu, addMenu, deleteMenuDir)
-      fileMenu.getItems.addAll(renameFileMenu,deleteMenuFile)
+      fileMenu.getItems.addAll(openMenu,renameFileMenu,deleteMenuFile)
 
 
 
@@ -185,6 +198,7 @@ import javafx.stage.Stage
       * The updateItem function is called when the Tree is build for every single TreeItem it is generating a TreeCell and setting the
       * TextField, graphic and also a ContextMenu.
       * To be able to call this updateItem function it is necessary to set the cellFactory for the TreeView.
+ *
       * @param item
       * @param empty
       */
