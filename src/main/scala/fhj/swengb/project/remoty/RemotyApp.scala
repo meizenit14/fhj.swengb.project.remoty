@@ -82,7 +82,6 @@ class RemotyAppController extends Initializable {
   @FXML var details: ListView[String] = _
   //set a refresh button
   @FXML var refresh_btn : Button = _
-  //@FXML var textArea : TextArea = _
   @FXML var Songlabel: Label = _
   @FXML var ppButton: Button = _
 
