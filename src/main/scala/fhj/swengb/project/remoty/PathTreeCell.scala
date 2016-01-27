@@ -11,14 +11,18 @@ import javafx.collections.ObservableList
 import javafx.event.{ActionEvent, EventHandler}
 import javafx.scene.control._
 import javafx.scene.image.{Image, ImageView}
-import javafx.scene.input.{MouseButton, MouseEvent, KeyCode, KeyEvent}
+import javafx.scene.input._
 import javafx.stage.Stage
+
 
 /**
   * Created by chris on 22.01.2016.
   */
 
 
+object PathTreeCell{
+  var source:Path = null
+}
   /**
     * Class PathTreeCell which extends a TreeCell.
     * In order to be able to call the built-in functions of the TreeCell and also to provide a ContextMenu for every single TreeCell
@@ -310,6 +314,55 @@ import javafx.stage.Stage
         setGraphic(new ImageView(pictureFolder))
       }
     }
+
+
+    this.setOnDragDetected(new EventHandler[MouseEvent] {
+      override def handle(event: MouseEvent): Unit = {
+        if(!isEmpty){
+          PathTreeCell.source = getItem.getPath
+          val db = startDragAndDrop(TransferMode.MOVE)
+
+          val cc = new ClipboardContent
+          cc.putString(getItem.toString)
+          db.setContent(cc)
+        }
+      }
+    })
+
+    setOnDragOver(new EventHandler[DragEvent] {
+      override def handle(event: DragEvent): Unit = {
+        if(Files.isDirectory(getItem.getPath)) {
+          event.acceptTransferModes(TransferMode.MOVE)
+          getTreeItem.setExpanded(true)
+        }
+      }
+    })
+
+
+    setOnDragEntered(new EventHandler[DragEvent] {
+      override def handle(event: DragEvent): Unit = {
+        if(Files.isDirectory(getItem.getPath)) {
+          setStyle("-fx-background-color: yellow;")
+          event.acceptTransferModes(TransferMode.MOVE)
+        }
+      }
+    })
+
+    setOnDragExited(new EventHandler[DragEvent] {
+      override def handle(event: DragEvent): Unit = {
+        setStyle("")
+      }
+    })
+
+    setOnDragDropped(new EventHandler[DragEvent] {
+      override def handle(event: DragEvent): Unit = {
+        Files.move(PathTreeCell.source, Paths.get(getItem.getPath.toString +"\\"+ PathTreeCell.source.getFileName.toString), StandardCopyOption.REPLACE_EXISTING)
+        Files.delete(PathTreeCell.source)
+        }
+    })
+
+
+
 
     /**
       * Setting the pictures for the TreeItems...
