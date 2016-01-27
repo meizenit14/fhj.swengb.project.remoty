@@ -2,6 +2,7 @@ package fhj.swengb.project.remoty
 
 import java.io.{File, IOException}
 import java.nio.file._
+import java.nio.file.attribute.BasicFileAttributes
 import java.util.function.Predicate
 import javafx.beans.property.{SimpleObjectProperty, ObjectProperty, StringProperty}
 import javafx.beans.value.{ChangeListener, ObservableValue}
@@ -9,7 +10,7 @@ import javafx.collections.ObservableList
 import javafx.event.{ActionEvent, EventHandler}
 import javafx.scene.control._
 import javafx.scene.image.{Image, ImageView}
-import javafx.scene.input.{KeyCode, KeyEvent}
+import javafx.scene.input.{MouseButton, MouseEvent, KeyCode, KeyEvent}
 import javafx.stage.Stage
 
 /**
@@ -26,7 +27,7 @@ import javafx.stage.Stage
     var textField: TextField = _
     var editingPath: Path = _
     var dirMenu: ContextMenu = new ContextMenu()
-    var fileMenu: ContextMenu = new ContextMenu()
+    var fileMenu: ContextMenu =  new ContextMenu()
 
 
 
@@ -37,6 +38,7 @@ import javafx.stage.Stage
         }
       })
 
+      // expand all levels
       val expandAllMenu: MenuItem = new MenuItem("Expand All")
       expandAllMenu.setOnAction(new EventHandler[ActionEvent]() {
 
@@ -46,7 +48,7 @@ import javafx.stage.Stage
       })
 
 
-
+      // recursive function to expand all levels of a treeitem
       def expandTreeItem(item: TreeItem[PathItem]): Unit = item match {
         case leaf if item.isLeaf =>
         case noLeaf if !item.isLeaf => {
@@ -59,7 +61,7 @@ import javafx.stage.Stage
 
       }
 
-
+      // add a directory
       val addMenu: MenuItem = new MenuItem("Add Directory")
       addMenu.setOnAction(new EventHandler[ActionEvent] {
         override def handle(event: ActionEvent): Unit = {
@@ -73,10 +75,9 @@ import javafx.stage.Stage
 
 
       def createNewDirectory(): Path = {
-        var newDir: Path = null
-        while (true) {
+
           val path: Path = getTreeItem.getValue.getPath
-          newDir = Paths.get(path.toAbsolutePath.toString, "New Directory " + String.valueOf(getItem)) //.getCountNewDir))
+          val newDir = Paths.get(path.toAbsolutePath.toString, "New Directory " + String.valueOf(getItem))
           try {
             Files.createDirectory(newDir)
           }
@@ -84,13 +85,14 @@ import javafx.stage.Stage
             case a: FileAlreadyExistsException => println("File already exists!") //maybe change the println with message pop up etc..
             case b: IOException => cancelEdit(); messageProp.setValue(s"Creating directory(${newDir.getFileName}) failed")
           }
+          newDir
         }
-        newDir
-      }
 
 
-      val deleteMenu: MenuItem = new MenuItem("Delete")
-      deleteMenu.setOnAction(new EventHandler[ActionEvent] {
+
+
+      val deleteMenuDir: MenuItem = new MenuItem("Delete")
+      deleteMenuDir.setOnAction(new EventHandler[ActionEvent] {
         override def handle(event: ActionEvent): Unit = {
           val prop: ObjectProperty[TreeItem[PathItem]] = new SimpleObjectProperty[TreeItem[PathItem]]()
 
@@ -98,7 +100,16 @@ import javafx.stage.Stage
           prop.addListener(new ChangeListener[TreeItem[PathItem]] {
             override def changed(observable: ObservableValue[_ <: TreeItem[PathItem]], oldItem: TreeItem[PathItem], newItem: TreeItem[PathItem]): Unit = {
               try {
-                Files.walkFileTree(newItem.getValue.getPath, new VisitorForDelete())
+                Files.walkFileTree(newItem.getValue.getPath, new SimpleFileVisitor[Path](){
+                  override def visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult = {
+                    Files.deleteIfExists(file)
+                    FileVisitResult.CONTINUE
+                  }
+                  override def postVisitDirectory(dir: Path, exc: IOException): FileVisitResult = {
+                    Files.deleteIfExists(dir)
+                    FileVisitResult.CONTINUE
+                  }
+                })
 
                 if (getTreeItem.getParent == null) {}
                 else getTreeItem.getParent.getChildren.remove(newItem)
@@ -112,9 +123,33 @@ import javafx.stage.Stage
         }
       })
 
+    val deleteMenuFile: MenuItem = new MenuItem("Delete")
+    deleteMenuFile.setOnAction(new EventHandler[ActionEvent] {
+      override def handle(event: ActionEvent): Unit = {
+        val prop: ObjectProperty[TreeItem[PathItem]] = new SimpleObjectProperty[TreeItem[PathItem]]()
 
-      dirMenu.getItems.addAll(expandMenu, expandAllMenu)
-      fileMenu.getItems.addAll(deleteMenu)
+        new DeleteDialog(owner, getTreeItem, prop)
+        prop.addListener(new ChangeListener[TreeItem[PathItem]] {
+          override def changed(observable: ObservableValue[_ <: TreeItem[PathItem]], oldItem: TreeItem[PathItem], newItem: TreeItem[PathItem]): Unit = {
+            try {
+              Files.delete(newItem.getValue.getPath)
+
+
+              if (getTreeItem.getParent == null) {}
+              else getTreeItem.getParent.getChildren.remove(newItem)
+            }
+            catch {
+              case e: IOException => println("Delete failed!")
+            }
+          }
+        })
+
+      }
+    })
+
+
+      dirMenu.getItems.addAll(expandMenu, expandAllMenu, addMenu, deleteMenuDir)
+      fileMenu.getItems.addAll(deleteMenuFile)
 
 
 
@@ -137,6 +172,7 @@ import javafx.stage.Stage
           //set graphic
           graphicChooser()
 
+
           if (!getTreeItem.isLeaf) {
             //here the ContextMenu is getting called
             //! This function provides already an eventhandler for secondary mouse button clicked
@@ -146,6 +182,7 @@ import javafx.stage.Stage
             //! This function provides already an eventhandler for secondary mouse button clicked
             setContextMenu(fileMenu)
           }
+
 
         }
       }

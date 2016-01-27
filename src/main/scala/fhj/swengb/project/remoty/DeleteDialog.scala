@@ -24,17 +24,18 @@ class DeleteDialog(owner: Stage, treeItem: TreeItem[PathItem], prop: ObjectPrope
       dialog.initModality(Modality.APPLICATION_MODAL)
       val root: GridPane = new GridPane()
       root.setPadding(new Insets(30))
-      root.setHgap(5)
-      root.setVgap(10)
+      root.setMinSize(200,150)
       val label: Label = new Label("Are you sure?")
-      val okButton: Button = new Button("OK")
+      val okButton: Button = new Button("Yes")
+
       okButton.setOnAction(new EventHandler[ActionEvent] {
         override def handle(event: ActionEvent): Unit = {
           prop.set(treeItem)
           dialog.hide()
         }
       })
-      val cancelButton: Button = new Button("Cancel")
+      val cancelButton: Button = new Button("No")
+
       cancelButton.setOnAction(new EventHandler[ActionEvent] {
         override def handle(event: ActionEvent): Unit = {
           dialog.hide()
