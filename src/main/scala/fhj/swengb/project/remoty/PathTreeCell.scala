@@ -25,18 +25,9 @@ import javafx.stage.Stage
 
     var textField: TextField = _
     var editingPath: Path = _
-    var dirMenu: ContextMenu = _
-    var fileMenu: ContextMenu = _
+    var dirMenu: ContextMenu = new ContextMenu()
+    var fileMenu: ContextMenu = new ContextMenu()
 
-
-    /**
-      * This function provides additional funtionality and implements a ContextMenu with
-      * different MenuItems which will be called at updateItem for every TreeCell
-      *
-      * @param owner
-      * @param messageProp
-      */
-    def PathTreeCell(owner: Stage, messageProp: StringProperty) {
 
 
       val expandMenu: MenuItem = new MenuItem("Expand")
@@ -122,9 +113,9 @@ import javafx.stage.Stage
       })
 
 
-      dirMenu.getItems.addAll(expandMenu, expandAllMenu, deleteMenu, addMenu)
+      dirMenu.getItems.addAll(expandMenu, expandAllMenu)
       fileMenu.getItems.addAll(deleteMenu)
-    }
+
 
 
     override def updateItem(item: PathItem, empty: Boolean): Unit = {
