@@ -77,7 +77,8 @@ class RemotyAppController extends Initializable {
   @FXML var details: ListView[String] = _
   //set a refresh button
   @FXML var refresh_btn : Button = _
-  //@FXML var textArea : TextArea = _
+  @FXML var Songlabel: Label = _
+  @FXML var ppButton: Button = _
 
 
   //needed for the cellfactory
@@ -136,8 +137,6 @@ class RemotyAppController extends Initializable {
 
 
           var index:Int = 0
-          var index_label:Int = 0
-          var index_button:Int = 0
           var players: scala.collection.mutable.MutableList[MediaPlayer] = scala.collection.mutable.MutableList()
           tree_view.setOnMouseClicked(new EventHandler[MouseEvent] {
             override def handle(event: MouseEvent): Unit = {
@@ -189,7 +188,6 @@ class RemotyAppController extends Initializable {
                     case audio if audio.startsWith("audio") => {
                       if (index != 0){
                         pane_view.getChildren.remove(index)
-                        println("index removed 1: " + index)
                         index = 0
                       }
 
@@ -202,43 +200,28 @@ class RemotyAppController extends Initializable {
                       songname.setFont(new javafx.scene.text.Font("Calibri",24))
                       songname.setTextAlignment(TextAlignment.CENTER)
 
-                      val startbutton: Button = new Button("Play")
+                      val startbutton: Button = new Button()
                       startbutton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler[MouseEvent] {
                         override def handle(event: MouseEvent) = {
-                          println("index label: " + index_label)
-                          println("index button: " + index_button)
-                          println("index: " + index)
 
                           if (index != 0){
-                            println("new index: " + pane_view.getChildren.indexOf(pane))
                             pane_view.getChildren.remove(index)
-                            println("index removed 2: " + index)
                             index = 0
                           }
                           if (players.nonEmpty) {
                             players.reverse.head.stop()
                             players = scala.collection.mutable.MutableList()
-                            pane_view.getChildren.remove(index_label)
-                            pane_view.getChildren.remove(index_button)
                           }
                           val song: Media = new Media(path.toUri.toString)
                           val player: MediaPlayer = new MediaPlayer(song)
                           players += player
                           println(players)
 
-                          val label = new Label(path.getFileName.toString)
-                          label.setLayoutX(900.0)
-                          label.setLayoutY(14.0)
-                          label.prefHeight(42.0)
-                          label.prefWidth(500.0)
-                          label.setFont(new javafx.scene.text.Font("Calibri", 12))
-                          label.setTextAlignment(TextAlignment.LEFT)
+                          Songlabel.setText(path.getFileName.toString)
+                          Songlabel.setVisible(true)
 
-                          val button = new Button()
-                          button.setGraphic(new ImageView(new Image("/fhj/swengb/project/remoty/play_pause.png")))
-                          button.setLayoutX(1100.0)
-                          button.setLayoutY(40.0)
-                          button.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler[MouseEvent] {
+                          ppButton.setGraphic(new ImageView(new Image("/fhj/swengb/project/remoty/play_pause.png")))
+                          ppButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler[MouseEvent] {
                             override def handle(event: MouseEvent) = {
                               println(players)
                               val player: MediaPlayer = players.reverse.head
@@ -248,22 +231,16 @@ class RemotyAppController extends Initializable {
                                 player.play()
                             }
                           })
-                          pane_view.getChildren.add(label)
-                          index_label = pane_view.getChildren.indexOf(label)
-                          pane_view.getChildren.add(button)
-                          index_button = pane_view.getChildren.indexOf(button)
-                          println("index label:" + index_label)
-                          println("index button:" + index_button)
-                          println("index " + index)
+                          ppButton.setVisible(true)
                           players.reverse.head.play()
                         }
+                        startbutton.setGraphic(new ImageView(new Image("/fhj/swengb/project/remoty/play.png")))
+                        startbutton.setLayoutX(100.0)
+                        startbutton.setLayoutY(50.0)
                         pane.getChildren.add(songname)
                         pane.getChildren.add(startbutton)
                         pane_view.getChildren.add(pane)
                         index = pane_view.getChildren.indexOf(pane)
-                        println("index set to: " + index)
-                        println("children : " + pane_view.getChildren.size)
-
                       })
 
                     }

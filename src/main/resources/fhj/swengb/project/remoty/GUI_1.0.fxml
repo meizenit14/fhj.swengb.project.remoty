@@ -11,5 +11,7 @@
         <Label fx:id="rootLabel" layoutX="127.0" layoutY="46.0" />
         <ListView fx:id="details" layoutX="1000.0" layoutY="98.0" prefHeight="170.0" prefWidth="205.0" />
         <Button id="font-button" fx:id="refresh_btn" layoutX="280.0" layoutY="71.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="20.0" />
+        <Label fx:id="Songlabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="747.0" layoutY="14.0" prefHeight="37.0" prefWidth="439.0" text="Songname" textAlignment="RIGHT" visible="false" />
+        <Button fx:id="ppButton" layoutX="1120.0" layoutY="51.0" mnemonicParsing="false" text="" visible="false" />
     </children>
 </Pane>
