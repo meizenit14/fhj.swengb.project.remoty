@@ -9,7 +9,7 @@ import javafx.collections.ObservableList
 import javafx.event.{ActionEvent, EventHandler}
 import javafx.scene.control._
 import javafx.scene.image.{Image, ImageView}
-import javafx.scene.input.{KeyCode, KeyEvent}
+import javafx.scene.input.{MouseButton, MouseEvent, KeyCode, KeyEvent}
 import javafx.stage.Stage
 
 /**
@@ -25,20 +25,16 @@ import javafx.stage.Stage
 
     var textField: TextField = _
     var editingPath: Path = _
-    var dirMenu: ContextMenu = _
-    var fileMenu: ContextMenu = _
+    var dirMenu: ContextMenu = new ContextMenu()
+    var fileMenu: ContextMenu = new ContextMenu()
 
 
     /**
       * This function provides additional funtionality and implements a ContextMenu with
       * different MenuItems which will be called at updateItem for every TreeCell
-      *
-      * @param owner
-      * @param messageProp
       */
-    def PathTreeCell(owner: Stage, messageProp: StringProperty) {
 
-
+      // expand one level of the item
       val expandMenu: MenuItem = new MenuItem("Expand")
       expandMenu.setOnAction(new EventHandler[ActionEvent] {
         override def handle(event: ActionEvent): Unit = {
@@ -46,6 +42,7 @@ import javafx.stage.Stage
         }
       })
 
+      // expand all levels
       val expandAllMenu: MenuItem = new MenuItem("Expand All")
       expandAllMenu.setOnAction(new EventHandler[ActionEvent]() {
 
@@ -55,7 +52,7 @@ import javafx.stage.Stage
       })
 
 
-
+      // recursive function to expand all levels of a treeitem
       def expandTreeItem(item: TreeItem[PathItem]): Unit = item match {
         case leaf if item.isLeaf =>
         case noLeaf if !item.isLeaf => {
@@ -68,7 +65,7 @@ import javafx.stage.Stage
 
       }
 
-
+      // add a directory
       val addMenu: MenuItem = new MenuItem("Add Directory")
       addMenu.setOnAction(new EventHandler[ActionEvent] {
         override def handle(event: ActionEvent): Unit = {
@@ -124,7 +121,7 @@ import javafx.stage.Stage
 
       dirMenu.getItems.addAll(expandMenu, expandAllMenu, deleteMenu, addMenu)
       fileMenu.getItems.addAll(deleteMenu)
-    }
+
 
 
     override def updateItem(item: PathItem, empty: Boolean): Unit = {
@@ -146,6 +143,7 @@ import javafx.stage.Stage
           //set graphic
           graphicChooser()
 
+
           if (!getTreeItem.isLeaf) {
             //here the ContextMenu is getting called
             //! This function provides already an eventhandler for secondary mouse button clicked
@@ -155,6 +153,7 @@ import javafx.stage.Stage
             //! This function provides already an eventhandler for secondary mouse button clicked
             setContextMenu(fileMenu)
           }
+
 
         }
       }
