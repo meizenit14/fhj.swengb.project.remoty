@@ -20,7 +20,7 @@ import javafx.stage.Stage
 
   /**
     * Class PathTreeCell which extends a TreeCell.
-    * It is necessary in order to be able to rename each TreeItem which is a TreeCell at the end
+    * In order to be able to call the built-in functions of the TreeCell and also to provide a ContextMenu for every single TreeCell
     */
   class PathTreeCell(owner: Stage, messageProp: StringProperty) extends TreeCell[PathItem] {
 
@@ -48,8 +48,11 @@ import javafx.stage.Stage
       })
 
 
-      // recursive function to expand all levels of a treeitem
-      def expandTreeItem(item: TreeItem[PathItem]): Unit = item match {
+    /**
+      * A recursive function which is expanding all Items which are nested under the clicked Item.
+      * @param item
+      */
+    def expandTreeItem(item: TreeItem[PathItem]): Unit = item match {
         case leaf if item.isLeaf =>
         case noLeaf if !item.isLeaf => {
           item.setExpanded(true)
@@ -91,7 +94,12 @@ import javafx.stage.Stage
       })
 
 
-      def createNewDirectory(): Path = {
+    /**
+      * Creating a new Directory with the current path where clicked and the name of the parent Item
+      * Is being used in the MenuItem
+      * @return
+      */
+    def createNewDirectory(): Path = {
 
           val path: Path = getTreeItem.getValue.getPath
           val newDir = Paths.get(path.toAbsolutePath.toString, "New Directory " + getItem.toString)
@@ -107,7 +115,7 @@ import javafx.stage.Stage
 
 
 
-
+      //DeleteMenu when clicked on a directory
       val deleteMenuDir: MenuItem = new MenuItem("Delete")
       deleteMenuDir.setOnAction(new EventHandler[ActionEvent] {
         override def handle(event: ActionEvent): Unit = {
@@ -140,6 +148,8 @@ import javafx.stage.Stage
         }
       })
 
+    //MenuItem for deleting for the Files
+    //! We need two MenuItems which can delete because one MenuItem can't be added to two ContextMenus
     val deleteMenuFile: MenuItem = new MenuItem("Delete")
     deleteMenuFile.setOnAction(new EventHandler[ActionEvent] {
       override def handle(event: ActionEvent): Unit = {
@@ -165,11 +175,19 @@ import javafx.stage.Stage
     })
 
 
+      //add all the MenuItems created to the two ContextMenus
       dirMenu.getItems.addAll(expandMenu, expandAllMenu,renameDirMenu, addMenu, deleteMenuDir)
       fileMenu.getItems.addAll(renameFileMenu,deleteMenuFile)
 
 
 
+    /**
+      * The updateItem function is called when the Tree is build for every single TreeItem it is generating a TreeCell and setting the
+      * TextField, graphic and also a ContextMenu.
+      * To be able to call this updateItem function it is necessary to set the cellFactory for the TreeView.
+      * @param item
+      * @param empty
+      */
     override def updateItem(item: PathItem, empty: Boolean): Unit = {
       super.updateItem(item, empty)
       if (empty) {
@@ -206,6 +224,9 @@ import javafx.stage.Stage
     }
 
 
+    /**
+      * This function is a function of TreeCell which is called automatically when double-clicked on a TreeItem
+      */
     override def startEdit(): Unit = {
       super.startEdit()
       if (textField == null) {
@@ -219,6 +240,9 @@ import javafx.stage.Stage
     }
 
 
+    /**
+      * When canceling the Editing process (built in function of TreeCell class)
+      */
     override def cancelEdit(): Unit = {
       super.cancelEdit()
       setText(getString)
@@ -229,6 +253,11 @@ import javafx.stage.Stage
 
     private def getString: String = getItem.toString
 
+
+    /**
+      * Creating a new TextField which is being called when the startEdit() function starts
+      * The textfield is being set when the Enter button is pressed or the cancelEdit() is called when the Escape button is fired.
+      */
     private def createTextField(): Unit = {
       textField = new TextField(getString)
       textField.setOnKeyReleased(new EventHandler[KeyEvent] {

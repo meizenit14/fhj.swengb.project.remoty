@@ -1,27 +1,14 @@
 package fhj.swengb.project.remoty
 
-import fhj.swengb.project.remoty.DeleteDialog
-import fhj.swengb.project.remoty.RemotyApp
+
 import javafx.collections.{FXCollections, ObservableList}
-import javafx.event.{EventHandler, ActionEvent}
-import javafx.scene.control.{TextField, TreeView, TreeCell}
-import javafx.scene.input.{KeyCode, KeyEvent}
+import javafx.scene.control.{TreeView, TreeCell}
 import javafx.util.Callback
 import scala.collection.JavaConversions
 import JavaConversions._
-import java.io.IOException
 import java.nio.file._
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.SimpleObjectProperty
-import javafx.beans.property.StringProperty
-import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.collections.ObservableList
-import javafx.scene.control.ContextMenu
-import javafx.scene.control.MenuItem
-import javafx.scene.control.TreeItem
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
-import javafx.stage.Stage
+
 
 /**
   * Created by Amar on 15.01.2016.
