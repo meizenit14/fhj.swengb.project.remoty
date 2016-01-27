@@ -209,13 +209,12 @@ class RemotyAppController extends Initializable {
                             index = 0
                           }
                           if (players.nonEmpty) {
-                            players.reverse.head.stop()
+                            players.head.stop()
                             players = scala.collection.mutable.MutableList()
                           }
                           val song: Media = new Media(path.toUri.toString)
                           val player: MediaPlayer = new MediaPlayer(song)
                           players += player
-                          println(players)
 
                           Songlabel.setText(path.getFileName.toString)
                           Songlabel.setVisible(true)
@@ -224,7 +223,7 @@ class RemotyAppController extends Initializable {
                           ppButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler[MouseEvent] {
                             override def handle(event: MouseEvent) = {
                               println(players)
-                              val player: MediaPlayer = players.reverse.head
+                              val player: MediaPlayer = players.head
                               if (player.getStatus.equals(javafx.scene.media.MediaPlayer.Status.PLAYING))
                                 player.pause()
                               else
@@ -232,7 +231,7 @@ class RemotyAppController extends Initializable {
                             }
                           })
                           ppButton.setVisible(true)
-                          players.reverse.head.play()
+                          players.head.play()
                         }
                         startbutton.setGraphic(new ImageView(new Image("/fhj/swengb/project/remoty/play.png")))
                         startbutton.setLayoutX(100.0)
