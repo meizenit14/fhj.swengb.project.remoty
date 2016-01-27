@@ -7,4 +7,7 @@ The members of the developer team are:
 - Lagger Christian
 
 
-![Screenshot]("fhj/swengb/project/remoty/filebroweser.png")
+![Screenshot](filebrowser.png)
+
+##Dokumentation
+
