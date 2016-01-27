@@ -115,8 +115,14 @@ class RemotyAppController extends Initializable {
     refresh_btn.setOnAction(new EventHandler[ActionEvent] {
       override def handle(event: ActionEvent): Unit = {
         //rebuild the tree in order to refresh it
-        buildTree()
-        tree_view.refresh()
+        try{
+          buildTree()
+          tree_view.refresh()
+        }
+        catch {
+          case e:AccessDeniedException => println("Acces denied!")
+        }
+
       }
     })
 
@@ -177,7 +183,7 @@ class RemotyAppController extends Initializable {
                       if (index != 0)
                         pane_view.getChildren.remove(index)
 
-                      //create new imageViw to show the image
+                      //create new imageView to show the image
                       val imageView = new ImageView()
                       imageView.setLayoutX(346.0)
                       imageView.setLayoutY(98.0)
