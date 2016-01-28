@@ -7,7 +7,7 @@ The members of the developer team are:
 - Meizenitsch Georg
 
 
-![Screenshot](filebrowser.png)
+![Screenshot](remoty-picture.png)
 
 ##Documentation
 
