@@ -316,7 +316,7 @@ object PathTreeCell{
     }
 
 
-    this.setOnDragDetected(new EventHandler[MouseEvent] {
+    setOnDragDetected(new EventHandler[MouseEvent] {
       override def handle(event: MouseEvent): Unit = {
         if(!isEmpty){
           PathTreeCell.source = getItem.getPath
