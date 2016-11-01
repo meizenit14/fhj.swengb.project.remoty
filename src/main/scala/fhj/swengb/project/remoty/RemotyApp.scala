@@ -16,18 +16,13 @@ import javafx.fxml.{FXML, Initializable, FXMLLoader}
 import javafx.geometry.{Insets, Pos}
 import javafx.scene.control._
 import javafx.scene.image.{ImageView, Image}
-import javafx.scene.input.{MouseButton, ContextMenuEvent, MouseEvent}
+import javafx.scene.input.{MouseButton, MouseEvent}
 import javafx.scene.layout._
-import javafx.scene.paint.Color
 import javafx.scene.{Scene, Parent}
-import javafx.stage.{StageStyle, DirectoryChooser, Stage}
+import javafx.stage.{DirectoryChooser, Stage}
 import javafx.util.Callback
-import scala.collection.JavaConverters._
-import scala.collection.mutable
-import scala.io.{BufferedSource, Source}
-import scala.util.{Try, Success, Failure}
+import scala.io.Source
 import scala.util.control.NonFatal
-import scala.collection.JavaConversions._
 import javafx.scene.media.Media
 import javafx.scene.media.MediaPlayer
 import javafx.scene.text.TextAlignment
@@ -55,8 +50,6 @@ class RemotyApp extends javafx.application.Application {
   override def start(stage: Stage): Unit =
     try {
       stage.setTitle("Remoty")
-      //set Icon for JavaFX App
-      stage.getIcons().add(new Image("/fhj/swengb/project/remoty/filebrowser-logo.png"))
       loader.load[Parent]() // side effect
       val scene = new Scene(loader.getRoot[Parent]) //loads the default scene
       stage.setScene(scene)
@@ -103,23 +96,24 @@ class RemotyAppController extends Initializable {
 
   def initializeAll(): Unit = {
 
+    /*
+    //set the background for the pane_view
+    val bg = new BackgroundImage(new Image("PFAD ZUM BILD",1500,1500,false,true),
+      BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)
+    pane_view.setBackground(new Background(bg))
+    */
+
 
     refresh_btn.setDisable(true)
-    //set a image for the refresh button
+    //set an image for the refresh button
     refresh_btn.setGraphic(new ImageView(new Image("/fhj/swengb/project/remoty/refresh.png")))
 
     //set the action for the refresh button
     refresh_btn.setOnAction(new EventHandler[ActionEvent] {
       override def handle(event: ActionEvent): Unit = {
         //rebuild the tree in order to refresh it
-        try{
-          buildTree()
-          tree_view.refresh()
-        }
-        catch {
-          case e:AccessDeniedException => println("Acces denied!")
-        }
-
+        buildTree()
+        tree_view.refresh()
       }
     })
 
@@ -138,7 +132,7 @@ class RemotyAppController extends Initializable {
           tree_view.setCellFactory(new Callback[TreeView[PathItem],TreeCell[PathItem]]() {
             override def call(p: TreeView[PathItem]): TreeCell[PathItem] = {
               val cell: PathTreeCell = new PathTreeCell(stage,messageProp)
-               cell
+              return cell
             }
           })
 
@@ -148,7 +142,13 @@ class RemotyAppController extends Initializable {
           tree_view.setOnMouseClicked(new EventHandler[MouseEvent] {
             override def handle(event: MouseEvent): Unit = {
 
-              if(event.getButton == MouseButton.PRIMARY){
+              if (event.getButton == MouseButton.SECONDARY) {
+                println("rechts-klick")
+
+              }
+
+              else if(event.getButton == MouseButton.PRIMARY){
+
 
                 try {
                   val path = tree_view.getSelectionModel.getSelectedItem.getValue.getPath
@@ -157,9 +157,9 @@ class RemotyAppController extends Initializable {
 
                   Files.probeContentType(path) match {
                     case text if text.startsWith("text") => {
-                      if (index != 0) {
+                      if (index != 0)
                         pane_view.getChildren.remove(index)
-                      }
+
                       //create new textArea to show the files content
                       val textArea = new TextArea()
                       textArea.setLayoutX(346.0)
@@ -168,11 +168,7 @@ class RemotyAppController extends Initializable {
                       textArea.setEditable(false)
                       pane_view.getChildren.add(textArea)
                       index = pane_view.getChildren.indexOf(textArea)
-                      //get the text from file and set it to the text area, then close the stream to prevent "file already in use" errors
-                      //here we have to use another encoding for the special characters
-                      val text: BufferedSource = Source.fromFile(path.toString,"ISO-8859-1")
-                      textArea.setText(text.getLines() mkString "\n")
-                      text.close()
+                      textArea.setText(Source.fromFile(path.toString).getLines mkString "\n")
                     }
                     case image if image.startsWith("image") => {
                       if (index != 0)
@@ -201,12 +197,12 @@ class RemotyAppController extends Initializable {
                       pane.setLayoutY(346.0)
                       pane.setPrefSize(629.0, 535.0)
 
-                      val songName: Label = new Label(path.getFileName.toString)
-                      songName.setFont(new javafx.scene.text.Font("Calibri",24))
-                      songName.setTextAlignment(TextAlignment.CENTER)
+                      val songname: Label = new Label(path.getFileName.toString)
+                      songname.setFont(new javafx.scene.text.Font("Calibri",24))
+                      songname.setTextAlignment(TextAlignment.CENTER)
 
-                      val startButton: Button = new Button()
-                      startButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler[MouseEvent] {
+                      val startbutton: Button = new Button()
+                      startbutton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler[MouseEvent] {
                         override def handle(event: MouseEvent) = {
 
                           if (index != 0){
@@ -227,6 +223,7 @@ class RemotyAppController extends Initializable {
                           ppButton.setGraphic(new ImageView(new Image("/fhj/swengb/project/remoty/play_pause.png")))
                           ppButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler[MouseEvent] {
                             override def handle(event: MouseEvent) = {
+                              println(players)
                               val player: MediaPlayer = players.head
                               if (player.getStatus.equals(javafx.scene.media.MediaPlayer.Status.PLAYING))
                                 player.pause()
@@ -237,11 +234,11 @@ class RemotyAppController extends Initializable {
                           ppButton.setVisible(true)
                           players.head.play()
                         }
-                        startButton.setGraphic(new ImageView(new Image("/fhj/swengb/project/remoty/play.png")))
-                        startButton.setLayoutX(100.0)
-                        startButton.setLayoutY(50.0)
-                        pane.getChildren.add(songName)
-                        pane.getChildren.add(startButton)
+                        startbutton.setGraphic(new ImageView(new Image("/fhj/swengb/project/remoty/play.png")))
+                        startbutton.setLayoutX(100.0)
+                        startbutton.setLayoutY(50.0)
+                        pane.getChildren.add(songname)
+                        pane.getChildren.add(startbutton)
                         pane_view.getChildren.add(pane)
                         index = pane_view.getChildren.indexOf(pane)
                       })
@@ -271,12 +268,16 @@ class RemotyAppController extends Initializable {
                   details.setItems(data)
 
                 }catch {
-                  case e: NullPointerException => {
-                    if (index != 0) {
+                  case e: NullPointerException => { println("Filetyp nicht erkannt!")
+                    if (index != 0){
                       pane_view.getChildren.remove(index)
                       index = 0
                     }
-                  }
+                    val attrs = getFileAttributeView(tree_view.getSelectionModel.getSelectedItem.getValue.getPath, classOf[BasicFileAttributeView])
+                    val lastModified = "Last modified: " + attrs.readAttributes().lastModifiedTime().toString.take(19).replace("T", " ")
+                    val creationTime = "Creation time: " + attrs.readAttributes().creationTime().toString.take(19).replace("T", " ")
+                    val data = FXCollections.observableArrayList(lastModified, creationTime)
+                    details.setItems(data)}
                   case x: MalformedInputException => println("Unexpected error occured!")
                   case fnf: FileNotFoundException => println("File not found! Deleted or corrupt!")
                 }
@@ -291,6 +292,7 @@ class RemotyAppController extends Initializable {
     })
 
   }
+
 
   def buildTree() {
     val rootPath: String = rootLabel.getText
